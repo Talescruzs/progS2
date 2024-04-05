@@ -100,11 +100,11 @@ bool fila_vazia(Fila self) {
   return self->n_elem == 0; 
 }
 
-static void corta_lista(Fila self){
-  self->cap/=2;
-  self->espaco = realloc(self->espaco, (self->tam_dado)*(self->cap));
-  assert(self->espaco!=NULL);
-}
+// static void corta_lista(Fila self){
+//   self->cap/=2;
+//   self->espaco = realloc(self->espaco, (self->tam_dado)*(self->cap));
+//   assert(self->espaco!=NULL);
+// }
 
 void fila_remove(Fila self, void *pdado) { //ainda precisa de melhora
   void *ptr = calcula_ponteiro(self, 0);
@@ -138,20 +138,27 @@ static void dobra_fila(Fila self){
   self->espaco = realloc(self->espaco, (self->tam_dado)*(self->cap)*2);
   assert(self->espaco!=NULL);
   
-  int i=0;
   void *ptrVelho, *ptrNovo;
 
   if(self->ini>=self->cap/2) {
     // ptrVelho = (char *)self->espaco + self->ini * self->tam_dado;
     // ptrNovo = (char *)self->espaco + self->cap * self->tam_dado;
     ptrVelho = calcula_ponteiro(self, 1);
-    ptrNovo = calcula_ponteiro(self, -1)+1;
+    int qtdPart = self->cap-self->ini;
+    self->cap*=2;
+    ptrNovo = (char *)calcula_ponteiro(self, self->ini-self->cap+1);
+    memmove(ptrNovo, ptrVelho, qtdPart*self->tam_dado);
   }
   else{
-    ptrVelho = (char *)self->espaco + self->ini + self->ini * self->tam_dado;
-    ptrNovo = (char *)self->espaco + self->cap * self->tam_dado;
+    // ptrVelho = (char *)self->espaco + self->ini + self->ini * self->tam_dado;
+    // ptrNovo = (char *)self->espaco + self->cap * self->tam_dado;
+    ptrVelho = calcula_ponteiro(self, self->cap-(self->n_elem+self->ini));
+    ptrNovo = (char *)calcula_ponteiro(self, self->cap-(self->n_elem+self->ini)-1);
+    int qtdPart = (self->cap-(self->n_elem+self->ini))*(-1);
+    self->cap*=2;
+    memmove(ptrNovo, ptrVelho, qtdPart*self->tam_dado);
   }
-  self->cap*=2;
+  // self->cap*=2;
 }
 
 void fila_insere(Fila self, void *pdado) { //ainda precisa de melhora

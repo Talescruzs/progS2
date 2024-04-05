@@ -228,12 +228,12 @@ void inicializa_jogo(estado *j) {
   tecla_ini();
 
   j->tela = (retangulo){{2, 1}, {tela_nlin() - 1, tela_ncol()}};
-  j->aninha.corpo = fila_cria(sizeof(posicao), 10);
+  j->aninha.corpo = fila_cria(sizeof(posicao), 5);
   j->aninha.dir = cima;
   j->aninha.pos_cabeca = (posicao){tela_nlin() / 2, tela_ncol() / 2};
   fila_insere(j->aninha.corpo, &j->aninha.pos_cabeca);
   j->aumentando = 5;
-  j->obstaculos = fila_cria(sizeof(obstaculo), 10);
+  j->obstaculos = fila_cria(sizeof(obstaculo), 5);
   sorteia_obstaculos(j);
   sorteia_premio(j);
   j->pontos = 0;
