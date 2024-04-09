@@ -22,6 +22,18 @@ struct _fila {
   void *espaco;
 };
 
+
+Dep depura(Fila self){
+  Dep d = malloc(sizeof(struct depurador));
+  d->cap = self->cap;
+  d->ini = self->ini;
+  d->n_elem = self->n_elem;
+  d->tam_dado = self->tam_dado;
+  d->pos_percurso = self->pos_percurso;
+  d->espaco = malloc(d->cap * d->tam_dado);
+  d->espaco = self->espaco;
+  return d;
+}
 // funções que implementam as operações básicas de uma fila
 
 // cria uma fila vazia que suporta dados do tamanho fornecido (em bytes)
