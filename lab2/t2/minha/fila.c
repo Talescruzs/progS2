@@ -96,6 +96,7 @@ static void *calcula_ponteiro(Fila self, int pos) {
 
   
   pos = converte_ponteiro(self, pos);
+  // printf("V %d ", pos);
   if(pos == -1) return NULL;
 
   // TODO: suporte a pos negativa
@@ -116,30 +117,57 @@ bool fila_vazia(Fila self) {
 //   self->cap/=2;
 //   self->espaco = realloc(self->espaco, (self->tam_dado)*(self->cap));
 //   assert(self->espaco!=NULL);
+//   self->espaco = realloc(self->espaco, (self->tam_dado)*(self->cap)*2);
+//   assert(self->espaco!=NULL);
+  
+//   void *ptrVelho, *ptrNovo;
+
+//   if(self->ini>=self->cap/2) {
+//     // ptrVelho = (char *)self->espaco + self->ini * self->tam_dado;
+//     // ptrNovo = (char *)self->espaco + self->cap * self->tam_dado;
+//     ptrVelho = calcula_ponteiro(self, 1);
+//     int qtdPart = self->cap-self->ini;
+//     self->cap*=2;
+//     ptrNovo = (char *)calcula_ponteiro(self, self->ini-self->cap+1);
+//     memmove(ptrNovo, ptrVelho, qtdPart*self->tam_dado);
+//   }
+//   else{
+//     // ptrVelho = (char *)self->espaco + self->ini + self->ini * self->tam_dado;
+//     // ptrNovo = (char *)self->espaco + self->cap * self->tam_dado;
+//     ptrVelho = calcula_ponteiro(self, self->cap-(self->n_elem+self->ini));
+//     ptrNovo = (char *)calcula_ponteiro(self, self->cap-(self->n_elem+self->ini)-1);
+//     int qtdPart = (self->cap-(self->n_elem+self->ini))*(-1);
+//     self->cap*=2;
+//     memmove(ptrNovo, ptrVelho, qtdPart*self->tam_dado);
+//   }
 // }
 
 void fila_remove(Fila self, void *pdado) { //ainda precisa de melhora
-  void *ptr = calcula_ponteiro(self, 0);
-  assert(ptr != NULL);
-  if (pdado != NULL) {
-    memmove(pdado, ptr, self->tam_dado);
-  }
-  ptr = calcula_ponteiro(self, 1);
-  if (ptr != NULL) {
-    // ptr aponta para o segundo elemento da fila
-    //   (que vira o primeiro)
-    // copia os dados que sobraram para o início do espaço
-    //   (não precisaria fazer isso com vetor circular)
-    memmove(self->espaco, ptr, self->tam_dado * (self->n_elem - 1));
-  }
-  self->n_elem--;
-
-  // void *ptr = calcula_ponteiro(self, self->ini);
+  // void *ptr = calcula_ponteiro(self, 0);
   // assert(ptr != NULL);
   // if (pdado != NULL) {
   //   memmove(pdado, ptr, self->tam_dado);
   // }
+  // ptr = calcula_ponteiro(self, 1);
+  // if (ptr != NULL) {
+  //   // ptr aponta para o segundo elemento da fila
+  //   //   (que vira o primeiro)
+  //   // copia os dados que sobraram para o início do espaço
+  //   //   (não precisaria fazer isso com vetor circular)
+  //   memmove(self->espaco, ptr, self->tam_dado * (self->n_elem - 1));
+  // }
   // self->n_elem--;
+
+  void *ptr = calcula_ponteiro(self, self->ini);
+  // assert(ptr != NULL); ////NÃO SEI O MOTIVO, MAS SEM ESSE ASSERT FUNCIONA, VAI ENTENDER
+  if (pdado != NULL) {
+    memmove(pdado, ptr, self->tam_dado);
+  }
+  self->n_elem--;
+  if(self->ini==(self->cap-1)){
+    self->ini = 0;
+  } 
+  else self->ini++;
 
   // if(self->n_elem<=(self->cap/4)){
   //   corta_lista(self);

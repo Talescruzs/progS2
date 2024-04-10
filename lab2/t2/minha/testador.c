@@ -34,7 +34,7 @@ void trata(Fila self, char op){
         printf("n_elementos = %d\n", d->n_elem);
         fila_inicia_percurso(self, 0);
         while (fila_proximo(self, &v)) {
-            printf("%d: %d\n", i, v);
+            printf("- L %d: %d\n", i, v);
             i++;
         }
         printf("-------\n");
