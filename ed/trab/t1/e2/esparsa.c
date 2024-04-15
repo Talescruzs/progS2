@@ -7,11 +7,11 @@ Esparsa *cria_esparca(int n_lin, int n_col){
     Esparsa *self = malloc(sizeof(Esparsa));
     if (self == NULL) return NULL;
     
-    // self->prim = malloc(sizeof(Lista));
-    // if (self->prim == NULL){
-    //     free(self);
-    //     return NULL;
-    // }
+    self->prim = malloc(sizeof(Lista));
+    if (self->prim == NULL){
+        free(self);
+        return NULL;
+    }
     self->linhas = n_lin;
     self->colunas = n_col;
 
@@ -31,40 +31,29 @@ Esparsa *cria_esparca(int n_lin, int n_col){
 //     free(self);
 // }
 
-Lista *insere_esparca(Esparsa *self, int val, int lin, int col){
-    Lista *l = NULL;
+void *insere_esparca(Esparsa *self, int val, int lin, int col){
+    Lista *l = self->prim;
     if(col>=self->colunas || lin>=self->linhas){
-        printf("Esta posicao nao pertence a matriz");
-        return self->prim;
+        printf("Esta posicao nao pertence a matriz\n");
     }
-    l->info = val;
-    l->coluna = col;
-    l->linha = lin;
-    l->prox=self->prim;
-    self->prim = l;
-    return l;
+    else if(val == 0){
+        printf("Necessario inserir valores nao nulos");
+    }
+    else{
+        while(l->prox!=NULL){
+            l = l->prox;
+        }
+        l->prox = malloc(sizeof(Lista));
+        if(l->prox == NULL){
+            printf("Impossivel alocar mais posicoes :(\n");
+        }
+        else{
+            l->info = val;
+            l->coluna = col;
+            l->linha = lin;
+        }
+    }
 }
-// Lista* lst_insere_ordenado (Lista* l, int v){
-//     Lista* novo;
-//     Lista* ant = NULL; /* ponteiro para elemento anterior */
-//     Lista* p = l; /* ponteiro para percorrer a lista */
-//     /* procura posição de inserção */
-//     while (p != NULL && p->info < v)
-//     { ant = p; p = p->prox; }
-//     /* cria novo elemento */
-//     novo = (Lista*) malloc(sizeof(Lista));
-//     novo->info = v;
-//     /* encadeia elemento */
-//     if (ant == NULL)
-
-//     { /* insere elemento no início */
-//     novo->prox = l; l = novo; }
-//     else { /* insere elemento no meio da lista */
-//     novo->prox = ant->prox;
-//     ant->prox = novo; }
-
-//     return l;
-// }
 
 void imprime_esparca(Esparsa *self){
     Lista *l = self->prim;
@@ -74,4 +63,43 @@ void imprime_esparca(Esparsa *self){
     }
 }
 
-// void consulta_esparca(Esparsa *self, int linha, int coluna);
+void consulta_esparca(Esparsa *self, int lin, int col){
+    if(col>=self->colunas || lin>=self->linhas){
+        printf("Esta posicao nao pertence a matriz\n");
+    }
+    Lista *l = self->prim;
+    while(l->linha!=lin || l->coluna!=col){
+        l = l->prox;
+        if(l==NULL){
+            printf("Posicao nao existe na matriz\n");
+            exit(0);
+        } 
+    }
+    printf("[%i][%i] = %i\n", lin, col, l->info);
+}
+
+void soma_linha(Esparsa *self, int lin){
+    int soma = 0;
+    if(lin>=self->linhas){
+        printf("Esta linha nao pertence a matriz\n");
+    }
+    Lista *l = self->prim;
+    while(l!=NULL){
+        if(l->linha == lin){
+            soma+=l->info;
+        }
+        l = l->prox;
+    }
+    printf("somatorio = %i\n", soma);
+}
+
+float percentual(Esparsa *self){
+    int cont = 0;
+    int total = self->colunas*self->linhas;
+    Lista *l = self->prim;
+    while(l!=NULL){
+        cont++;
+        l = l->prox;
+    }
+    return (float) (cont*100)/total;
+}

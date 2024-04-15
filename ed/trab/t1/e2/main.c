@@ -7,13 +7,16 @@ int main(){
     int n_col = 5;
     Esparsa *e = cria_esparca(n_lin, n_col);
     for(int i = 0; i<n_lin; i++){
-        e->prim = insere_esparca(e, i*2, i, 1);
+        insere_esparca(e, (i+1)*2, i, i);
     }
+    insere_esparca(e, 4, 1, 2);
     imprime_esparca(e);
-    // for(int i = 0; i<n_ordem; i++){
-    //     consulta_diagonal(d, i, i);
-    // }
-    // consulta_diagonal(d, 1, 2);
-    // destroi_esparca(e);
+    consulta_esparca(e, 4, 4);
+    int linha_soma;
+    printf("Insira a linha para somar todos os valores dela: ");
+    scanf("%d", &linha_soma);
+    soma_linha(e, linha_soma);
+    float perc = percentual(e);
+    printf("Percentual de dados nao nulos da matriz = %.2f%%\n", perc);
     return 0;
 }

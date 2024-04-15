@@ -17,12 +17,15 @@ struct lista* prim;
 typedef struct esparsa Esparsa;
 
 Esparsa *cria_esparca(int n_lin, int n_col);
-// void destroi_esparca(Esparsa *self);
 
-Lista *insere_esparca(Esparsa *self, int val, int lin, int col);
+void *insere_esparca(Esparsa *self, int val, int lin, int col);
 
 void imprime_esparca(Esparsa *self);
 
-void consulta_esparca(Esparsa *self, int linha, int coluna);
+void consulta_esparca(Esparsa *self, int lin, int col);
+
+void soma_linha(Esparsa *self, int lin);
+
+float percentual(Esparsa *self);
 
 #endif
