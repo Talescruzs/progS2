@@ -66,27 +66,30 @@ static int converte_ponteiro_negativo(Fila self, int pos){
 
   if(pos_v<0) return -1;
 
-  if(pos_v>=self->cap){
-    pos_v-=self->cap;
-  }
-  return pos_v;
+  return pos_v%self->cap;
 }
 static int converte_ponteiro_positivo(Fila self, int pos){
-  int pos_v = self->ini+pos;
 
-  if(pos_v>=self->ini+self->n_elem) return -1; // pediu posicao alem da quantidade de elementos inseridos
+  if(pos>=self->n_elem){
+    printf("POS %d N_ELEM %d ", pos, self->n_elem);
+    return -1;
+  }  // pediu posicao alem da quantidade de elementos inseridos
 
-  if(pos_v>=self->cap){
-    pos_v-=self->cap;
-  }
-  return pos_v;
+  int pos_v = (self->ini+pos)%self->cap;
+
+  // if(pos_v>=self->cap){
+  //   pos_v-=self->cap;
+  // }
+  return (pos_v)%self->cap;
 }
 static int converte_ponteiro(Fila self, int pos){ //converte da posicão na lista para uma posicao real no vetor
   int pos_v; 
   if(pos<0){
+    printf("N - ");
     pos_v = converte_ponteiro_negativo(self, pos);
   }
   else{
+    printf("P - ");
     pos_v = converte_ponteiro_positivo(self, pos);
   }
   return pos_v;
@@ -95,16 +98,18 @@ static int converte_ponteiro(Fila self, int pos){ //converte da posicão na list
 static void *calcula_ponteiro(Fila self, int pos) {
 
   
-  pos = converte_ponteiro(self, pos);
-  // printf("V %d ", pos);
-  if(pos == -1) return NULL;
+  int pos_r = converte_ponteiro(self, pos);
+  if(pos_r == -1){
+    printf("I %d - C %d - N %d - V %d\n", self->ini, self->cap, self->n_elem, pos_r);
+    return NULL;
+  } 
 
   // TODO: suporte a pos negativa
   // if (pos < 0 || pos >= self->n_elem) return NULL;
   // calcula a posição convertendo para char *, porque dá para somar em
   //   bytes. tem que fazer essa conversão porque não conhecemos o tipo
   //   do dado do usuário, só o tamanho.
-  void *ptr = (char *)self->espaco + pos * self->tam_dado;
+  void *ptr = (char *)self->espaco + (pos_r * self->tam_dado);
 
   return ptr;
 }
@@ -158,13 +163,13 @@ void fila_remove(Fila self, void *pdado) { //ainda precisa de melhora
   // }
   // self->n_elem--;
 
-  void *ptr = calcula_ponteiro(self, self->ini);
-  // assert(ptr != NULL); ////NÃO SEI O MOTIVO, MAS SEM ESSE ASSERT FUNCIONA, VAI ENTENDER
+  void *ptr = calcula_ponteiro(self, 0);
+  assert(ptr != NULL); 
   if (pdado != NULL) {
     memmove(pdado, ptr, self->tam_dado);
   }
   self->n_elem--;
-  if(self->ini==(self->cap-1)){
+  if(self->ini>=self->cap-1){
     self->ini = 0;
   } 
   else self->ini++;
