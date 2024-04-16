@@ -64,7 +64,7 @@ typedef struct {
 
 void desenha_cobra(Fila f) {
   posicao pos;
-  fila_inicia_percurso(f, 0);
+  fila_inicia_percurso(f, -1); //deixa -1 e desenha ao contrário
   fila_proximo(f, &pos);
   tela_lincol(pos.lin, pos.col);
   fputs("◦", stdout); // o rabo
@@ -112,7 +112,7 @@ posicao avanca_pos(posicao pos, direcao dir) {
 
 bool cobra_contem(Fila f, posicao pos) {
   posicao p;
-  fila_inicia_percurso(f, 0);
+  fila_inicia_percurso(f, 0); // dexa -1 e funciona
   while (fila_proximo(f, &p)) {
     if (pos.lin == p.lin && pos.col == p.col)
       return true;
@@ -228,12 +228,12 @@ void inicializa_jogo(estado *j) {
   tecla_ini();
 
   j->tela = (retangulo){{2, 1}, {tela_nlin() - 1, tela_ncol()}};
-  j->aninha.corpo = fila_cria(sizeof(posicao), 5);
+  j->aninha.corpo = fila_cria(sizeof(posicao), 10);
   j->aninha.dir = cima;
   j->aninha.pos_cabeca = (posicao){tela_nlin() / 2, tela_ncol() / 2};
   fila_insere(j->aninha.corpo, &j->aninha.pos_cabeca);
   j->aumentando = 5;
-  j->obstaculos = fila_cria(sizeof(obstaculo), 5);
+  j->obstaculos = fila_cria(sizeof(obstaculo), 10);
   sorteia_obstaculos(j);
   sorteia_premio(j);
   j->pontos = 0;
