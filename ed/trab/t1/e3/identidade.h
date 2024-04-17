@@ -3,23 +3,26 @@
 
 struct matriz {
     int ordem;
+    int n_elementos;
     struct linha* linha;
 };
 typedef struct matriz Mat;
 struct linha {
-    struct lista* ini;
+    struct item* ini;
     struct linha* proxL;
 };
 typedef struct linha Lin;
 
-struct lista {
+struct item {
     int info;
-    struct lista* prox;
+    struct item* prox;
 };
-typedef struct lista List;
+typedef struct item Item;
 
 Mat *cria_matriz(int ordem);
-void insere_matriz(Mat* self, int val, int lin, int col);
+void popula_matriz(Mat* self, int val);
+void imprime_matriz(Mat* self);
+int verifica_identidade(Mat* self);
 
 
 
