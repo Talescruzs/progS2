@@ -3,18 +3,18 @@
 
 struct diagonal
 {
-    int ordem; //ordem da matriz
-    int* v; //o tamanho do vetor é igual a ordem da matriz. Os elementos da diagonal principal são armazenados neste vetor
+    int ordem;
+    int* v;
 };
 typedef struct diagonal Diagonal;
 
-Diagonal *cria_diagonal(int ordem);
-void destroi_diagonal(Diagonal *self);
+Diagonal *cria_matriz(int ordem);
 
-void insere_diagonal(Diagonal *self, int val, int pos);
+void preenche_matriz_manual(Diagonal *self, int val, int pos);
+void preenche_matriz_automatico(Diagonal *self);
 
-void imprime_diagonal(Diagonal *self);
+void imprime_matriz(Diagonal *self);
 
-void consulta_diagonal(Diagonal *self, int linha, int coluna);
+int consulta_elemento_matriz(Diagonal *self, int linha, int coluna);
 
 #endif

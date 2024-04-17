@@ -2,42 +2,45 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-Diagonal *cria_diagonal(int ordem){
-    // aloca memória para o descritor
+Diagonal *cria_matriz(int ordem){
     Diagonal *self = malloc(sizeof(Diagonal));
     if (self == NULL) return NULL;
-    // aloca memória para os dados
-    self->v = malloc(ordem * sizeof(int));
+    self->v = (int*)malloc(ordem * sizeof(int));
     if (self->v == NULL) {
         free(self);
         return NULL;
     }
-    
+
     self->ordem = ordem;
     return self;
 }
-
-void destroi_diagonal(Diagonal *self){
-    free(self);
-}
-
-void insere_diagonal(Diagonal *self, int val, int pos){
+void preenche_matriz_manual(Diagonal *self, int val, int pos){
     self->v[pos] = val; 
 }
-
-void imprime_diagonal(Diagonal *self){
-    printf("Imprimindo Diagonal: \n");
+void preenche_matriz_automatico(Diagonal *self){
     for(int i=0; i<self->ordem; i++){
-        printf("[%d][%d] : %d\n", i,i,self->v[i]);
+        self->v[i] = i+1; 
     }
-    printf("-----------\n");
 }
 
-void consulta_diagonal(Diagonal *self, int linha, int coluna){
+int consulta_elemento_matriz(Diagonal *self, int linha, int coluna){
     if(linha!=coluna){
-        printf("Posicao nao pertence a diagonal\n");
+        return 0;
     }
     else{
-        printf("%d\n", self->v[linha]);
+        return self->v[linha];
     }
+}
+
+void imprime_matriz(Diagonal *self){
+    int elemento;
+    printf("\nImprimindo a matriz\n");
+    for(int i = 0; i<self->ordem; i++){
+        for(int j=0; j<self->ordem; j++){
+            elemento = consulta_elemento_matriz(self, i, j);
+            printf("%d  ", elemento);
+        }
+        printf("\n");
+    }
+    printf("----------------------\n");
 }
