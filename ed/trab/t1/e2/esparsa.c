@@ -3,82 +3,95 @@
 #include <stdio.h>
 
 
-Esparsa *cria_esparca(int n_lin, int n_col){
+Esparsa *cria_matriz(int n_lin, int n_col){
     Esparsa *self = malloc(sizeof(Esparsa));
     if (self == NULL) return NULL;
-    
-    self->prim = malloc(sizeof(Lista));
-    if (self->prim == NULL){
-        free(self);
-        return NULL;
-    }
     self->linhas = n_lin;
     self->colunas = n_col;
 
     return self;
 }
-// static void destroi_lista(Lista *self){
-//     while(self!=NULL){
-//         Lista * l = self;
-//         while(l->prox!=NULL){
-//             l = l->prox;
-//         }
-//         free(l);
-//     }
-// }
-// void destroi_esparca(Esparsa *self){
-//     destroi_lista(self->prim);
-//     free(self);
-// }
 
-void *insere_esparca(Esparsa *self, int val, int lin, int col){
-    Lista *l = self->prim;
+void preenche_matriz(Esparsa *self, int val, int lin, int col){
+    Lista *novo_l = malloc(sizeof(Lista));
     if(col>=self->colunas || lin>=self->linhas){
         printf("Esta posicao nao pertence a matriz\n");
+        return;
+    }
+    else if (novo_l == NULL){
+        printf("Erro na alocacao de memoria\n");
+        return;
     }
     else if(val == 0){
-        printf("Necessario inserir valores nao nulos");
+        printf("Necessario inserir valores nao nulos\n");
+        return;
     }
-    else{
-        while(l->prox!=NULL){
-            l = l->prox;
-        }
-        l->prox = malloc(sizeof(Lista));
-        if(l->prox == NULL){
-            printf("Impossivel alocar mais posicoes :(\n");
-        }
-        else{
-            l->info = val;
-            l->coluna = col;
-            l->linha = lin;
-        }
-    }
-}
+    novo_l->info = val;
+    novo_l->coluna = col;
+    novo_l->linha = lin;
 
-void imprime_esparca(Esparsa *self){
+    if (self->prim == NULL) {
+        self->prim = novo_l;
+        return;
+    }
+
+    Lista *l_ant = NULL;
     Lista *l = self->prim;
-    while(l->prox!=NULL) {
-        printf("[%d][%d] = %d\n", l->linha, l->coluna, l->info);
+
+    while (l != NULL && (l->linha < lin || (l->linha == lin && l->coluna < col))) {
+        l_ant = l;
         l = l->prox;
     }
+    if (l_ant == NULL) {
+        novo_l->prox = self->prim;
+        self->prim = novo_l;
+    } else {
+        novo_l->prox = l;
+        l_ant->prox = novo_l;
+    }
 }
 
-void consulta_esparca(Esparsa *self, int lin, int col){
+void imprime_matriz(Esparsa *self){
+    int i, j;
+    Lista *l = self->prim;
+    printf("\n---------------------\n");
+    printf("-Imprimindo a matriz-\n");
+    printf("---------------------\n");
+    for(i = 0; i < self->linhas; i++){
+        for(j = 0; j < self->colunas; j++){
+            if(l != NULL && l->linha == i && l->coluna == j){
+                printf("%d  ", l->info);
+                l = l->prox;
+            } else {
+                printf("0  ");
+            }
+        }
+        printf("\n");
+    }
+}
+
+void consulta_elemento(Esparsa *self, int lin, int col){
+    printf("\n----------------------\n");
+    printf("-Consulta de elemento-\n");
+    printf("----------------------\n");
     if(col>=self->colunas || lin>=self->linhas){
-        printf("Esta posicao nao pertence a matriz\n");
+        printf("Posicao solicitada nao pertence a matriz\n");
     }
     Lista *l = self->prim;
     while(l->linha!=lin || l->coluna!=col){
         l = l->prox;
         if(l==NULL){
-            printf("Posicao nao existe na matriz\n");
-            exit(0);
+            printf("[%i][%i] = 0\n", lin, col);
+            return;
         } 
     }
     printf("[%i][%i] = %i\n", lin, col, l->info);
 }
 
 void soma_linha(Esparsa *self, int lin){
+    printf("\n-----------------------\n");
+    printf("-Somatorio da linha %d-\n", lin);
+    printf("-----------------------\n");
     int soma = 0;
     if(lin>=self->linhas){
         printf("Esta linha nao pertence a matriz\n");

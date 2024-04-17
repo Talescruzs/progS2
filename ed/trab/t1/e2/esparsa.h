@@ -10,19 +10,19 @@ struct lista {
 typedef struct lista Lista;
 
 struct esparsa {
-int linhas;
-int colunas;
-struct lista* prim;
+    int linhas;
+    int colunas;
+    struct lista* prim;
 };
 typedef struct esparsa Esparsa;
 
-Esparsa *cria_esparca(int n_lin, int n_col);
+Esparsa *cria_matriz(int n_lin, int n_col);
 
-void *insere_esparca(Esparsa *self, int val, int lin, int col);
+void preenche_matriz(Esparsa *self, int val, int lin, int col);
 
-void imprime_esparca(Esparsa *self);
+void imprime_matriz(Esparsa *self);
 
-void consulta_esparca(Esparsa *self, int lin, int col);
+void consulta_elemento(Esparsa *self, int lin, int col);
 
 void soma_linha(Esparsa *self, int lin);
 
