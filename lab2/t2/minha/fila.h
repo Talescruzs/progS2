@@ -2,15 +2,15 @@
 #define _FILA_H_
 #include <stdbool.h>
 
-struct depurador {
-  int cap; //capacidade atual do vetor
-  int ini; //posicao inicial do vetor circular
-  int n_elem; //numero de elementos no vetor
-  int tam_dado;
-  int pos_percurso;
-  void *espaco;
-};
-typedef struct depurador *Dep;
+// struct depurador {
+//   int cap; //capacidade atual do vetor
+//   int ini; //posicao inicial do vetor circular
+//   int n_elem; //numero de elementos no vetor
+//   int tam_dado;
+//   int pos_percurso;
+//   void *espaco;
+// };
+// typedef struct depurador *Dep;
 
 typedef struct _fila *Fila;
 
