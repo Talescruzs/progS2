@@ -21,22 +21,6 @@ struct _fila {
   int pos_percurso;
   void *espaco;
 };
-
-
-// Dep depura(Fila self){
-//   Dep d = malloc(sizeof(struct depurador));
-//   d->cap = self->cap;
-//   d->ini = self->ini;
-//   d->n_elem = self->n_elem;
-//   d->tam_dado = self->tam_dado;
-//   d->pos_percurso = self->pos_percurso;
-//   d->espaco = malloc(d->cap * d->tam_dado);
-//   d->espaco = self->espaco;
-//   return d;
-// }
-// funções que implementam as operações básicas de uma fila
-
-// cria uma fila vazia que suporta dados do tamanho fornecido (em bytes)
 Fila fila_cria(int tam_do_dado) {
   int qtd_inicial = 10;
   Fila self = malloc(sizeof(struct _fila));
@@ -75,7 +59,7 @@ static int converte_ponteiro_positivo(Fila self, int pos){
     return -1;
   }  // pediu posicao alem da quantidade de elementos inseridos
 
-  int pos_v = (self->ini+pos)%self->cap;
+  int pos_v = (self->ini+pos);
 
   return (pos_v)%self->cap;
 }
@@ -106,26 +90,30 @@ bool fila_vazia(Fila self) {
 
 static void corta_lista(Fila self){
   void *ptrVelho, *ptrNovo;
+  int qtdPart;
   if(self->ini>=self->cap/2) {
       ptrVelho = calcula_ponteiro(self, 0);
-      ptrNovo = calcula_ponteiro(self, (int)self->ini/2);
+      self->ini/=2;
+      ptrNovo = calcula_ponteiro(self, self->ini);
+      qtdPart = self->cap - self->ini;
+      memmove(ptrNovo, ptrVelho, qtdPart*self->tam_dado);
   }
   else{
-    if(self->n_elem+self->ini<=self->cap){
+    if(self->n_elem+self->ini>=self->cap/2){
+      // qtdPart = (self->cap-(self->n_elem+self->ini))*(-1);
+      // qtdPart = self->n_elem-self->ini;
+      qtdPart = self->n_elem+self->ini-self->cap;
+      ptrVelho = calcula_ponteiro(self, qtdPart);
+      self->cap/=2;
+      ptrNovo = calcula_ponteiro(self, -qtdPart);
       
+      memmove(ptrNovo, ptrVelho, qtdPart*self->tam_dado);
     }
-    ptrVelho = calcula_ponteiro(self, self->cap-(self->n_elem+self->ini));
-    ptrNovo = (char *)calcula_ponteiro(self, self->cap-(self->n_elem+self->ini)-1);
-    int qtdPart = (self->cap-(self->n_elem+self->ini))*(-1);
-    self->cap*=2;
-    memmove(ptrNovo, ptrVelho, qtdPart*self->tam_dado);
   }
   self->espaco = realloc(self->espaco, (self->tam_dado)*(self->cap)/2);
   assert(self->espaco!=NULL);
-  self->cap/=2;
-
-
 }
+
 
 void fila_remove(Fila self, void *pdado) { //ainda precisa de melhora
   void *ptr = calcula_ponteiro(self, 0);
@@ -134,12 +122,12 @@ void fila_remove(Fila self, void *pdado) { //ainda precisa de melhora
     memmove(pdado, ptr, self->tam_dado);
   }
   self->n_elem--;
-  if(self->ini>=self->cap-1){
-    self->ini = 0;
+  if(self->ini<self->cap-1){
+    self->ini++;
   } 
-  else self->ini++;
+  else self->ini = 0;
 
-  if(self->n_elem<=(self->cap/4)){
+  if(self->n_elem<=(self->cap/3)){
     corta_lista(self);
   }
 }
@@ -150,11 +138,11 @@ static void dobra_fila(Fila self){
   
   void *ptrVelho, *ptrNovo;
 
-  if(self->ini>=self->cap/2) {
+  if(self->ini>=self->cap/2) { //inicio dps da metade do vetor
     ptrVelho = calcula_ponteiro(self, 0); // inicio na fila
     int qtdPart = self->cap-self->ini; // n elementos para mexer
-    ptrNovo = calcula_ponteiro(self, self->cap - self->ini);
     self->cap*=2;
+    ptrNovo = calcula_ponteiro(self, qtdPart*(-1));
     memmove(ptrNovo, ptrVelho, qtdPart*self->tam_dado);
     self->ini = self->cap - qtdPart;
   }
@@ -167,12 +155,14 @@ static void dobra_fila(Fila self){
   }
 }
 
+
+
 void fila_insere(Fila self, void *pdado) { //ainda precisa de melhora
+  self->n_elem++;
   if(self->n_elem >= self->cap){
     dobra_fila(self);
   }
-  self->n_elem++;
-  void *ptr = calcula_ponteiro(self, -1);
+  void *ptr = (char*)calcula_ponteiro(self, -1);
   memmove(ptr, pdado, self->tam_dado);
 }
 
@@ -181,8 +171,7 @@ void fila_inicia_percurso(Fila self, int pos_inicial) {
   self->pos_percurso = pos_inicial;
 }
 
-bool fila_proximo(Fila self, void *pdado)
-{
+bool fila_proximo(Fila self, void *pdado){
   void *ptr = calcula_ponteiro(self, self->pos_percurso);
   if (ptr == NULL) return false;
   memmove(pdado, ptr, self->tam_dado);
