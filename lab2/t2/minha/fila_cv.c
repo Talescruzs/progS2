@@ -37,7 +37,8 @@ Dep depura(Fila self){
 // funções que implementam as operações básicas de uma fila
 
 // cria uma fila vazia que suporta dados do tamanho fornecido (em bytes)
-Fila fila_cria(int tam_do_dado, int qtd_inicial) {
+Fila fila_cria(int tam_do_dado) {
+  qtd_inicial = 10
   Fila self = malloc(sizeof(struct _fila));
   if (self != NULL) {
     self->espaco = malloc(qtd_inicial * tam_do_dado);

@@ -20,7 +20,7 @@ Dep depura(Fila self);
 // funções que implementam as operações básicas de uma fila
 
 // cria uma fila vazia que suporta dados do tamanho fornecido (em bytes)
-Fila fila_cria(int tam_do_dado, int qtd_inicial);
+Fila fila_cria(int tam_do_dado);
 void fila_destroi(Fila self);
 
 // diz se a fila está vazia
