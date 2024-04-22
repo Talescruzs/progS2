@@ -14,7 +14,7 @@
 
 typedef struct _fila *Fila;
 
-Dep depura(Fila self);
+// Dep depura(Fila self);
 
 
 // funções que implementam as operações básicas de uma fila
