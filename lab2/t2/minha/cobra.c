@@ -314,6 +314,7 @@ void movimenta(estado *j) {
 
 // A função principal
 int main(void) {
+  
   estado jogo;
   inicializa_jogo(&jogo);
 

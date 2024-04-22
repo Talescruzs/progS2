@@ -27,11 +27,11 @@ void trata(Fila self, char op){
         int i=0, v=0;
         char a;
         system("clear");
-        Dep d = depura(self);
-        printf("Dados da fila:\n");
-        printf("capacidade = %d\n", d->cap);
-        printf("inicio = %d\n", d->ini);
-        printf("n_elementos = %d\n", d->n_elem);
+        // Dep d = depura(self);
+        // printf("Dados da fila:\n");
+        // printf("capacidade = %d\n", d->cap);
+        // printf("inicio = %d\n", d->ini);
+        // printf("n_elementos = %d\n", d->n_elem);
         fila_inicia_percurso(self, 0);
         while (fila_proximo(self, &v)) {
             printf("- L %d: %d\n", i, v);
@@ -50,7 +50,7 @@ void trata(Fila self, char op){
 
 int main(){
     char a;
-    Fila f = fila_cria(sizeof(int), 10);
+    Fila f = fila_cria(sizeof(int));
     while(a!='s'){
         system("clear");
         printf("Operacoes na fila:\n");
