@@ -137,20 +137,21 @@ static void dobra_fila(Fila self){
   assert(self->espaco!=NULL);
   
   void *ptrVelho, *ptrNovo;
+  int qtdPart;
 
   if(self->ini>=self->cap/2) { //inicio dps da metade do vetor
     ptrVelho = calcula_ponteiro(self, 0); // inicio na fila
-    int qtdPart = self->cap-self->ini; // n elementos para mexer
+    qtdPart = self->cap-self->ini; // n elementos para mexer
     self->cap*=2;
-    ptrNovo = calcula_ponteiro(self, qtdPart*(-1));
+    ptrNovo = calcula_ponteiro(self, -qtdPart);
     memmove(ptrNovo, ptrVelho, qtdPart*self->tam_dado);
-    self->ini = self->cap - qtdPart;
+    self->ini = self->cap - qtdPart -1;
   }
   else{
-    ptrVelho = calcula_ponteiro(self, self->cap-(self->n_elem+self->ini));
-    ptrNovo = (char *)calcula_ponteiro(self, self->cap-(self->n_elem+self->ini)-1);
-    int qtdPart = (self->cap-(self->n_elem+self->ini))*(-1);
+    int qtdPart = (self->ini+self->n_elem)%self->cap;
+    ptrVelho = calcula_ponteiro(self, self->cap-self->ini);
     self->cap*=2;
+    ptrNovo = calcula_ponteiro(self, self->ini+self->n_elem-qtdPart);
     memmove(ptrNovo, ptrVelho, qtdPart*self->tam_dado);
   }
 }
