@@ -13,22 +13,7 @@ struct _fila {
   struct _fila *prox;
 };
 
-
-// Dep depura(Fila self){
-//   Dep d = malloc(sizeof(struct depurador));
-//   d->cap = self->cap;
-//   d->ini = self->ini;
-//   d->n_elem = self->n_elem;
-//   d->tam_dado = self->tam_dado;
-//   d->pos_percurso = self->pos_percurso;
-//   d->espaco = malloc(d->cap * d->tam_dado);
-//   d->espaco = self->espaco;
-//   return d;
-// }
-// funções que implementam as operações básicas de uma fila
-
-// cria uma fila vazia que suporta dados do tamanho fornecido (em bytes)
-Fila fila_cria(int tam_do_dado) { // implementado
+Fila fila_cria(int tam_do_dado) {
   Fila self = malloc(sizeof(struct _fila));
   if (self != NULL) {
     self->espaco = malloc(tam_do_dado);
@@ -55,7 +40,7 @@ void fila_destroi(Fila self) {
 }
 
 
-bool fila_vazia(Fila self) {  // implementado
+bool fila_vazia(Fila self) {
   return self->prox == NULL; 
 }
 
@@ -75,23 +60,24 @@ void fila_remove(Fila self, void *pdado) {
     free(proximo);
 }
 
-
-void fila_insere(Fila self, void *pdado) { // a
-  Fila f = self;
-  while(f->prox!=NULL){
-    f=f->prox;
-  }
-  Fila novo = fila_cria(self->tam_dado);
-  memmove(novo->espaco, pdado, self->tam_dado);
-  f->prox = novo;
+void fila_insere(Fila self, void *pdado) {
+    Fila f = self;
+    while (f->prox != NULL) {
+        f = f->prox;
+    }
+    Fila novo = fila_cria(self->tam_dado);
+    memmove(novo->espaco, pdado, self->tam_dado);
+    novo->prox = NULL;
+    f->prox = novo;
 }
 
 
-void fila_inicia_percurso(Fila self, int pos_inicial) { // ok
+
+void fila_inicia_percurso(Fila self, int pos_inicial) {
   self->pos_percurso = pos_inicial;
 }
 
-bool fila_proximo(Fila self, void *pdado){ // ok
+bool fila_proximo(Fila self, void *pdado){
   void *ptr;
   Fila f = self;
   int count = 0;
