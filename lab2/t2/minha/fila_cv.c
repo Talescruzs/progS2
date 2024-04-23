@@ -143,15 +143,15 @@ static void dobra_fila(Fila self){ // calcular pos final depois de mudar o ini e
     ptrVelho = calcula_ponteiro(self, 0); // inicio na fila
     qtdPart = self->cap-self->ini; // n elementos para mexer
     self->cap*=2;
-    ptrNovo = calcula_ponteiro(self, -qtdPart);
+    self->ini = self->cap - qtdPart;
+    ptrNovo = calcula_ponteiro(self, 0);
     memmove(ptrNovo, ptrVelho, qtdPart*self->tam_dado);
-    self->ini = self->cap - qtdPart -1;
   }
   else{
     int qtdPart = (self->ini+self->n_elem)%self->cap;
     ptrVelho = calcula_ponteiro(self, self->cap-self->ini);
     self->cap*=2;
-    ptrNovo = calcula_ponteiro(self, self->ini+self->n_elem-qtdPart);
+    ptrNovo = calcula_ponteiro(self, self->n_elem-self->ini);
     memmove(ptrNovo, ptrVelho, qtdPart*self->tam_dado);
   }
 }
