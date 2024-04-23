@@ -132,7 +132,7 @@ void fila_remove(Fila self, void *pdado) { //ainda precisa de melhora
   }
 }
 
-static void dobra_fila(Fila self){
+static void dobra_fila(Fila self){ // calcular pos final depois de mudar o ini e a cap, daí compara e vê se faz a troca
   self->espaco = realloc(self->espaco, (self->tam_dado)*(self->cap)*2);
   assert(self->espaco!=NULL);
   
