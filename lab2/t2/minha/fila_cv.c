@@ -93,19 +93,20 @@ static void corta_lista(Fila self){
   int qtdPart;
   if(self->ini>=self->cap/2) {
       ptrVelho = calcula_ponteiro(self, 0);
-      self->ini/=2;
-      ptrNovo = calcula_ponteiro(self, self->ini);
       qtdPart = self->cap - self->ini;
+      self->cap/=2;
+      self->ini=self->cap-qtdPart;
+      ptrNovo = calcula_ponteiro(self, 0);
       memmove(ptrNovo, ptrVelho, qtdPart*self->tam_dado);
   }
   else{
     if(self->n_elem+self->ini>=self->cap/2){
       // qtdPart = (self->cap-(self->n_elem+self->ini))*(-1);
       // qtdPart = self->n_elem-self->ini;
-      qtdPart = self->n_elem+self->ini-self->cap;
+      qtdPart = (self->n_elem+self->ini)%(self->cap/2);
       ptrVelho = calcula_ponteiro(self, qtdPart);
       self->cap/=2;
-      ptrNovo = calcula_ponteiro(self, -qtdPart);
+      ptrNovo = calcula_ponteiro(self, self->ini+qtdPart);
       
       memmove(ptrNovo, ptrVelho, qtdPart*self->tam_dado);
     }
