@@ -1,0 +1,8 @@
+ST*850*5400
+BG*123*10102010
+N1*juquinha*Rua dos Bobos numero 0*Pindamonhangaba*123456789*123.123.123-12
+N2*juquinha*Rua dos Bobos numero 0*Pindamonhangaba*123456789*123.123.123-12
+PO1*3*fmk*7.0*21.0
+PO2*10*2*2.0*20.0
+CTT*13*41.0
+SE*123
