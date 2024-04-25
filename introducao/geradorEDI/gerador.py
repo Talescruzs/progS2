@@ -87,13 +87,12 @@ class EDI():
         self.telefone = "123456789"
         self.cpfCNPJ = "123.123.123-12"
 
-    def __getDadosDestino(self):
-        "Faria requisição ao sistema utilizado, aqui está inserindo dados genéricos"
-        self.nomeDest = "juquinha"
-        self.enderecoDest = "Rua dos Bobos numero 0"
-        self.cidadeDest = "Pindamonhangaba"
-        self.telefoneDest = "123456789"
-        self.cpfCNPJDest = "123.123.123-12"
+    def __PerguntaDadosDestino(self):
+        self.nomeDest = input("Insira nome do destinatario\n")
+        self.enderecoDest = input("Insira endereco do destinatario\n")
+        self.cidadeDest = input("Insira cidade do destinatario\n")
+        self.telefoneDest = input("Insira telefone do destinatario\n")
+        self.cpfCNPJDest = input("Insira cpf ou cnpj do destinatario\n")
 
     def __perguntaProduto(self):
         p = 0
@@ -129,7 +128,7 @@ class EDI():
         self.__perguntaNfiscal()
         self.__perguntaData()
         self.__getDadosEmissor()
-        self.__getDadosDestino()
+        self.__PerguntaDadosDestino()
         self.__perguntaProduto()
         self.__getCTT()
 
