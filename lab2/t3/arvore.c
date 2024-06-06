@@ -7,39 +7,47 @@
 
 Arv cria_arv(char *palavra){
     Arv arv = malloc(sizeof(struct arv));
-    arv->palavra = palavra;
+    arv->palavra = strdup(palavra);
     arv->alt = 0;
     arv->largura = strlen(palavra);
-    arv->dir = NULL;
-    arv->esq = NULL;
+    arv->dir = arv->esq = NULL;
     arv->x = 0;
     arv->y = 0;
     return arv;
 }
+void printa_arv(Arv base, int espaco) {
+    if (base == NULL) return;
 
-void printa_arv(Arv base){
-    if(base == NULL){
-        printf("\n");
-        return;
+    // Aumenta a distância entre níveis
+    espaco += 10;
+
+    // Imprime a subárvore direita
+    printa_arv(base->dir, espaco);
+
+    // Imprime o nó atual após o espaço adequado
+    printf("\n");
+    for (int i = 10; i < espaco; i++) {
+        printf(" ");
     }
-    if(base->dir == NULL){ 
-        printf("%s\n", base->palavra);
-        return;
-    }
-    printf("    ");
-    printa_arv(base->dir);
     printf("%s\n", base->palavra);
-    printa_arv(base->esq);
+
+    // Imprime a subárvore esquerda
+    printa_arv(base->esq, espaco);
 }
 
-Arv insere_arv(Arv base, Arv novo){
-    if(base == NULL) return novo;
-    if(strcmp(base->palavra, novo->palavra)>0){
-        base = insere_arv(base->esq, novo);
+Arv insere_arv(Arv base, char *palavra){
+    printf("VERIFICA\n");
+    if(base == NULL) return cria_arv(palavra);
+    printf("PASSOU1\n");
+    if(strcmp(base->palavra, palavra)>0){
+        printf("ESQUERDA\n");
+        base->esq = insere_arv(base->esq, palavra);
     }
-    else if(strcmp(base->palavra, novo->palavra)<0){
-        base = insere_arv(base->dir, novo);
+    else if(strcmp(base->palavra, palavra)<0){
+        printf("DIREITA\n");
+        base->dir = insere_arv(base->dir, palavra);
     }
+    printf("PASSOU2\n");
     return base;
 }
 
