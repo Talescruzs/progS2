@@ -5,34 +5,16 @@
 #include <string.h>
 
 int main(){
-    int r = 1;
-    char palavra[15];
-    Arv arvore = NULL;
-    while(r>0 && r<4){
-        printf("Oq fazer?\n1 - Inserir\n2 - Remover\n3 - Printar\noutro - finaliza\n");
-        scanf("%d", &r);
-        getchar();
-        if(r == 1){
-            system("clear");
-            printf("Insira a palavra:\n");
-            if(fgets(palavra, sizeof(palavra), stdin) != NULL){
-                arvore = insere_arv(arvore, palavra);
-            }
-            system("clear");
-        }
-        else if(r == 2){
-            // system("clear");
-            printf("Insira a palavra: \n");
-            if(fgets(palavra, sizeof(palavra), stdin) != NULL){
-                arvore = remove_arv(arvore, palavra);
-            }
-            system("clear");
-        }
-        else{
-            system("clear");
-            // printa_arv(arvore);
-            printa_arv(arvore, 0);
-        }
-    }
+    arv_t *a = cria_no_vazio(); // ou poderia ser arv_cria(), pra ficar como os TAD vistos antes
+    insere(a, "abc");
+    printa_arv(a, 0);
+    insere(a, "aab");
+    printa_arv(a, 0);
+    insere(a, "bbc");
+    printa_arv(a, 0);
+    dado_t b = busca(a, "aab");
+    printf("\n\n\n %s\n", b->palavra);
+    remove_no(a, "bbc");
+    printa_arv(a, 0);
     return 0;
 }
