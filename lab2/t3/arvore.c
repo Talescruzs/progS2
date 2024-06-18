@@ -44,6 +44,38 @@ int arruma_altura(Arv *a){
     a->val->alt = 1 + pega_maior(arruma_altura(a->esq), arruma_altura(a->dir));
     return a->val->alt;
 }
+// sorteia palavra:
+char *cria_palavra(char *palavra){
+    int tamanho_palavras = 3;
+    int qtd_total_silabas = 107; 
+    int i = 0;
+    palavra[0] = '\0';
+    char temp[3];
+    int indices_aleatorios[tamanho_palavras];
+    for(i = 0; i<tamanho_palavras; i++){
+        int parte = qtd_total_silabas/tamanho_palavras;
+        indices_aleatorios[i] = (rand()%parte)+parte*i;
+    }
+    FILE *arq;
+    arq = fopen("silabas.txt", "r");
+    if(arq == NULL){
+        printf("Erro, nao foi possivel abrir o arquivo\n");
+        exit(1); 
+    }
+    i = 0;
+    int count = 0;
+    while(count<=indices_aleatorios[i] && i<tamanho_palavras){
+        fscanf(arq, "%s ", temp);
+        if(count==indices_aleatorios[i]){
+            strcat(palavra, temp);
+            i++;
+        }
+        count++;
+    }
+    fclose(arq);
+    
+    return palavra;
+}
 // relativas as arvores:
 Arv* cria_arv(){
     return NULL;

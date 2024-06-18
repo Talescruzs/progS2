@@ -13,6 +13,9 @@ struct arv{
     struct arv* dir;
 };
 typedef struct arv Arv;
+
+char *cria_palavra(char *palavra);
+
 int arruma_altura(Arv *a);
 Arv* cria_arv();
 Arv* insere(Arv *a, char *palavra);
