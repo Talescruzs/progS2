@@ -1,7 +1,7 @@
 #ifndef _arvore_h_ 
 #define _arvore_h_
 typedef struct dado{
-    char *palavra;
+    char palavra[10];
     int x;
     int y;
     int largura;
@@ -14,7 +14,7 @@ struct arv{
 };
 typedef struct arv Arv;
 
-char *cria_palavra(char *palavra);
+void cria_palavra(char *palavra);
 
 int arruma_altura(Arv *a);
 Arv* cria_arv();

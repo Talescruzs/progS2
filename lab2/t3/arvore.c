@@ -19,7 +19,7 @@ int pega_maior(int a, int b){
 }
 int menor(char *a, char *b){
     // printf("%s  -   %s\n", a, b);
-    // printf("%d\n", strcmp(a, b));
+    // printf("%d\n", strcmp(a, b));0
     if(strcmp(a, b) < 0 ) return 1;
     return 0;
 }
@@ -35,7 +35,7 @@ int iguais(char *a, char *b){
 Dado *cria_dado(char *palavra){
     Dado *d = (Dado *)malloc(sizeof(Dado));
     assert(d != NULL);
-    d->palavra = palavra;
+    strcpy(d->palavra, palavra);
     d->largura = strlen(palavra);
     return d;
 }
@@ -45,7 +45,7 @@ int arruma_altura(Arv *a){
     return a->val->alt;
 }
 // sorteia palavra:
-char *cria_palavra(char *palavra){
+void cria_palavra(char *palavra){
     int tamanho_palavras = 3;
     int qtd_total_silabas = 107; 
     int i = 0;
@@ -60,6 +60,7 @@ char *cria_palavra(char *palavra){
     arq = fopen("silabas.txt", "r");
     if(arq == NULL){
         printf("Erro, nao foi possivel abrir o arquivo\n");
+        fclose(arq);
         exit(1); 
     }
     i = 0;
@@ -73,9 +74,7 @@ char *cria_palavra(char *palavra){
         count++;
     }
     fclose(arq);
-    
-    return palavra;
-}
+}    
 // relativas as arvores:
 Arv* cria_arv(){
     return NULL;
