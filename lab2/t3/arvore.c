@@ -161,7 +161,7 @@ void calcula_y_arv(Arv *a, int ini, int tam_letra){
 }
 void printa_arv(Arv *a) {
     if (vazia(a)) return;
-    tela_texto_dir(a->val->x,a->val->y,20,8,a->val->palavra);
+    tela_texto_dir(a->val->x,a->val->y,30,8,a->val->palavra);
     printa_arv(a->esq);
     printa_arv(a->dir);
 }
