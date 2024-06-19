@@ -37,7 +37,7 @@ Dado *cria_dado(char *palavra){
     Dado *d = (Dado *)malloc(sizeof(Dado));
     assert(d != NULL);
     strcpy(d->palavra, palavra);
-    d->largura = strlen(palavra)*10;
+    d->largura = strlen(palavra)*15;
     return d;
 }
 int arruma_altura(Arv *a){
@@ -161,6 +161,17 @@ void calcula_y_arv(Arv *a, int ini, int tam_letra){
 }
 void printa_arv(Arv *a) {
     if (vazia(a)) return;
+    int final_x = a->val->x+a->val->largura+30;
+    int final_y = a->val->y+30;
+    int borda = 3;
+    tela_retangulo(a->val->x-borda, a->val->y-borda, final_x+borda, final_y+borda, 2, 8, 0);
+    if(a->esq != NULL){
+        int final_esq_x = a->esq->val->x+a->esq->val->largura+30;
+        tela_linha(a->val->x-borda, final_y+borda, final_esq_x+borda, a->esq->val->y-borda, 2, 8);
+    }
+    if(a->dir != NULL){
+        tela_linha(final_x+borda, final_y+borda, a->dir->val->x-borda, a->dir->val->y-borda, 2, 8);
+    }
     tela_texto_dir(a->val->x,a->val->y,30,8,a->val->palavra);
     printa_arv(a->esq);
     printa_arv(a->dir);
