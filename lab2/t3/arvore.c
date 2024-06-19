@@ -1,5 +1,6 @@
 //#include "telag.h"
 #include "arvore.h"
+#include "telag.h"
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -36,7 +37,7 @@ Dado *cria_dado(char *palavra){
     Dado *d = (Dado *)malloc(sizeof(Dado));
     assert(d != NULL);
     strcpy(d->palavra, palavra);
-    d->largura = strlen(palavra);
+    d->largura = strlen(palavra)*10;
     return d;
 }
 int arruma_altura(Arv *a){
@@ -130,14 +131,37 @@ Arv *remover_no(Arv *a, char *v){
     }
     return a;
 }
-void printa_arv(Arv *a, int espaco) {
+void printa_arv_velho(Arv *a, int espaco) {
     if (vazia(a)) return;
     espaco += 10;
-    printa_arv(a->dir, espaco);
+    printa_arv_velho(a->dir, espaco);
     printf("\n");
     for (int i = 10; i < espaco; i++) {
         printf(" ");
     }
-    printf("%s\n", a->val->palavra);
-    printa_arv(a->esq, espaco);
+    printf("%s - ", a->val->palavra);
+    printf("x: %d ", a->val->x);
+    printf("y: %d\n", a->val->y);
+    printa_arv_velho(a->esq, espaco);
+}
+int calcula_x_arv(Arv *a, int ini){
+    if(vazia(a)) return ini;
+    int usou = 0;
+    usou += calcula_x_arv(a->esq, ini);
+    a->val->x = usou;
+    usou += a->val->largura;
+    usou = calcula_x_arv(a->dir, usou);
+    return usou;
+}
+void calcula_y_arv(Arv *a, int ini, int tam_letra){
+    if(vazia(a)) return;
+    a->val->y = ini+tam_letra+15;
+    calcula_y_arv(a->esq, a->val->y, tam_letra);
+    calcula_y_arv(a->dir, a->val->y, tam_letra);
+}
+void printa_arv(Arv *a) {
+    if (vazia(a)) return;
+    tela_texto_dir(a->val->x,a->val->y,20,8,a->val->palavra);
+    printa_arv(a->esq);
+    printa_arv(a->dir);
 }
