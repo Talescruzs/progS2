@@ -1,42 +1,12 @@
 #include "arvore.h"
 #include "telag.h"
+#include "in_game.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-void waitFor (unsigned int secs) {
-    unsigned int retTime = time(0) + secs;   // Get finishing time.
-    while (time(0) < retTime);               // Loop until it arrives.
-}
-void remove_ultima_letra(char *p){
-    // printf("b\n");
-    for(int i=0; p[i]!='\0'; i++){
-        // printf("a\n");
-        if(p[i+1] == '\0'){
-            p[i] = '\0';
-        }
-    }
-}
-void seta_ultima_letra(char *p, char l, int tam){
-    // printf("b\n");
-    for(int i=0; i<tam; i++){
-        // printf("a\n");
-        if(p[i] == '\0'){
-            p[i] = l;
-            p[i+1] = '\0';
-            break;
-        }
-    }
-}
-int controle_palavra(double ini_temp, int demora){
-    double temp_atual = tela_relogio();
-    if(temp_atual >= (ini_temp)+demora){
-        return 1;
-    }
-    return 0;
-}
 int main(){
     Arv *a = cria_arv();
     int tam_x = 1800, tam_y = 900;
@@ -47,6 +17,8 @@ int main(){
     char letra_digitada;
     int tempo_aleatorio;
     double clock;
+    int eq;
+    char fator_eq[3];
     int palavra_mudou = 0;
     clock = tela_relogio();
     tempo_aleatorio = rand()%10;
@@ -71,9 +43,22 @@ int main(){
         else if(letra_digitada!=0){
             seta_ultima_letra(palavra_digitada, letra_digitada, 10);
         }
+        eq = fator_equilibrio(a, 3);
         calcula_x_arv(a, 0);
         calcula_y_arv(a, 50, 30);
         printa_arv(a);
+        to_char(eq, fator_eq);
+        if(eq<=1 && eq>=-1){
+            tela_texto(800,50,30,8, fator_eq);
+        }
+        else if(eq<=2 && eq>=-2){
+            tela_texto(800,50,30,2, fator_eq);
+        }
+        else{
+            break;
+            // TODO: tela de derrota
+        }
+        tela_texto(100,50,20,8,"proxima palavra:");
         tela_texto(100,50,20,8,"proxima palavra:");
         tela_texto(275,50,20,8,proxima_palavra);
         tela_texto(125,tam_y-50,20,8,"palavra sendo escrita:");

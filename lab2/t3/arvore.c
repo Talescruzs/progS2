@@ -32,6 +32,10 @@ int iguais(char *a, char *b){
     if(strcmp(a, b) == 0 ) return 0;
     return 1;
 }
+int modulo(int n){
+    if(n < 0 ) n *=-1;
+    return n;
+}
 // relativas aos dados:
 Dado *cria_dado(char *palavra){
     Dado *d = (Dado *)malloc(sizeof(Dado));
@@ -45,37 +49,6 @@ int arruma_altura(Arv *a){
     a->val->alt = 1 + pega_maior(arruma_altura(a->esq), arruma_altura(a->dir));
     return a->val->alt;
 }
-// sorteia palavra:
-void cria_palavra(char *palavra){
-    int tamanho_palavras = 3;
-    int qtd_total_silabas = 107; 
-    int i = 0;
-    palavra[0] = '\0';
-    char temp[3];
-    int indices_aleatorios[tamanho_palavras];
-    for(i = 0; i<tamanho_palavras; i++){
-        int parte = qtd_total_silabas/tamanho_palavras;
-        indices_aleatorios[i] = (rand()%parte)+parte*i;
-    }
-    FILE *arq;
-    arq = fopen("silabas.txt", "r");
-    if(arq == NULL){
-        printf("Erro, nao foi possivel abrir o arquivo\n");
-        fclose(arq);
-        exit(1); 
-    }
-    i = 0;
-    int count = 0;
-    while(count<=indices_aleatorios[i] && i<tamanho_palavras){
-        fscanf(arq, "%s ", temp);
-        if(count==indices_aleatorios[i]){
-            strcat(palavra, temp);
-            i++;
-        }
-        count++;
-    }
-    fclose(arq);
-}    
 // relativas as arvores:
 Arv* cria_arv(){
     return NULL;
@@ -131,18 +104,15 @@ Arv *remover_no(Arv *a, char *v){
     }
     return a;
 }
-void printa_arv_velho(Arv *a, int espaco) {
-    if (vazia(a)) return;
-    espaco += 10;
-    printa_arv_velho(a->dir, espaco);
-    printf("\n");
-    for (int i = 10; i < espaco; i++) {
-        printf(" ");
-    }
-    printf("%s - ", a->val->palavra);
-    printf("x: %d ", a->val->x);
-    printf("y: %d\n", a->val->y);
-    printa_arv_velho(a->esq, espaco);
+int fator_equilibrio(Arv *a, int max_valor){
+    if(vazia(a)) return 0;
+    int fator_no = arruma_altura(a->esq)-arruma_altura(a->dir);
+    if(fator_no<max_valor*(-1) || fator_no>max_valor) return max_valor;
+    int fator_esq = fator_equilibrio(a->esq, max_valor);
+    int fator_dir = fator_equilibrio(a->dir, max_valor);
+    if(modulo(fator_no)>=modulo(fator_esq)&&modulo(fator_no)>=modulo(fator_dir)) return fator_no;
+    if(modulo(fator_esq)>=modulo(fator_dir)) return fator_esq;
+    return fator_dir;
 }
 int calcula_x_arv(Arv *a, int ini){
     if(vazia(a)) return ini;
@@ -158,6 +128,20 @@ void calcula_y_arv(Arv *a, int ini, int tam_letra){
     a->val->y = ini+tam_letra+15;
     calcula_y_arv(a->esq, a->val->y, tam_letra);
     calcula_y_arv(a->dir, a->val->y, tam_letra);
+}
+// Referente ao jogo:
+void printa_arv_velho(Arv *a, int espaco) {
+    if (vazia(a)) return;
+    espaco += 10;
+    printa_arv_velho(a->dir, espaco);
+    printf("\n");
+    for (int i = 10; i < espaco; i++) {
+        printf(" ");
+    }
+    printf("%s - ", a->val->palavra);
+    printf("x: %d ", a->val->x);
+    printf("y: %d\n", a->val->y);
+    printa_arv_velho(a->esq, espaco);
 }
 void printa_arv(Arv *a) {
     if (vazia(a)) return;

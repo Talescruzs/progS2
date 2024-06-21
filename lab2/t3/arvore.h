@@ -14,14 +14,13 @@ struct arv{
 };
 typedef struct arv Arv;
 
-void cria_palavra(char *palavra);
-
 int arruma_altura(Arv *a);
 Arv* cria_arv();
 Arv* insere(Arv *a, char *palavra);
 Arv* remover_no(Arv *a, char *p);
 void printa_arv_velho(Arv *base, int espaco);
 
+int fator_equilibrio(Arv *a, int max_valor);
 int calcula_x_arv(Arv *a, int ini);
 void calcula_y_arv(Arv *a, int ini, int tam_letra);
 
