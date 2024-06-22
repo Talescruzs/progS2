@@ -6,6 +6,49 @@
 #include <stdlib.h>
 #include <string.h>
 
+Espaco cria_espaco(){
+    Espaco e = (Espaco)malloc(sizeof(struct espaco));
+    assert(e != NULL);
+    return e;
+}
+Jogo cria_jogo(){
+    Jogo j = (Jogo)malloc(sizeof(struct jogo));
+    assert(j != NULL);
+    j->tela_total = cria_espaco();
+    j->header = cria_espaco();
+    j->footer = cria_espaco();
+
+    return j;
+}
+void seta_tela(Espaco tela, int tamX, int tamY, int bordaX, int bordaY){
+    tela->iniX = bordaX;
+    tela->iniY = bordaY;
+    tela->tamX = tamX-bordaX;
+    tela->tamY = tamY-bordaY;
+}
+Jogo jogoIni(int tam){
+    Jogo j = cria_jogo();
+    if(tam == 0){
+        seta_tela(j->tela_total, 1000, 500, 5, 10);
+        seta_tela(j->header, 150, 500, 0, 0);
+        seta_tela(j->footer, 150, 500, 0, 0);
+    }
+    else if(tam == 1){
+        seta_tela(j->tela_total, 1400, 700, 5, 10);
+    }
+    else if(tam == 2){
+        seta_tela(j->tela_total, 1800, 900, 5, 10);
+    }
+    else{
+        exit(1);
+    }
+
+    tela_inicio(j->tela_total->tamX+(2*j->tela_total->iniX), j->tela_total->tamY+(2*j->tela_total->iniY), "joguinho super legal");
+    return j;
+}
+void jogoFim(){
+    ;
+}
 void remove_ultima_letra(char *p){
     // printf("b\n");
     for(int i=0; p[i]!='\0'; i++){

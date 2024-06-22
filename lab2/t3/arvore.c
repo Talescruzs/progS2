@@ -49,6 +49,10 @@ int arruma_altura(Arv *a){
     a->val->alt = 1 + pega_maior(arruma_altura(a->esq), arruma_altura(a->dir));
     return a->val->alt;
 }
+int pega_altura(Arv *a){
+    if(vazia(a)) return -1;
+    return a->val->alt;
+}
 // relativas as arvores:
 Arv* cria_arv(){
     return NULL;
@@ -104,13 +108,15 @@ Arv *remover_no(Arv *a, char *v){
     }
     return a;
 }
-int fator_equilibrio(Arv *a, int max_valor){
+int fator_equilibrio(Arv *a){
     if(vazia(a)) return 0;
-    int fator_no = arruma_altura(a->esq)-arruma_altura(a->dir);
-    if(fator_no<max_valor*(-1) || fator_no>max_valor) return max_valor;
-    int fator_esq = fator_equilibrio(a->esq, max_valor);
-    int fator_dir = fator_equilibrio(a->dir, max_valor);
-    if(modulo(fator_no)>=modulo(fator_esq)&&modulo(fator_no)>=modulo(fator_dir)) return fator_no;
+    a->val->eq = pega_altura(a->esq)-pega_altura(a->dir);
+    int fator_esq = fator_equilibrio(a->esq);
+    int fator_dir = fator_equilibrio(a->dir);
+    
+    printf("%s %d\n", a->val->palavra, a->val->eq);
+
+    if(modulo(a->val->eq)>=modulo(fator_esq)&&modulo(a->val->eq)>=modulo(fator_dir)) return a->val->eq;
     if(modulo(fator_esq)>=modulo(fator_dir)) return fator_esq;
     return fator_dir;
 }
@@ -143,20 +149,25 @@ void printa_arv_velho(Arv *a, int espaco) {
     printf("y: %d\n", a->val->y);
     printa_arv_velho(a->esq, espaco);
 }
-void printa_arv(Arv *a) {
+void printa_arv(Arv *a, int max_eq) {
     if (vazia(a)) return;
     int final_x = a->val->x+a->val->largura+30;
     int final_y = a->val->y+30;
     int borda = 3;
-    tela_retangulo(a->val->x-borda, a->val->y-borda, final_x+borda, final_y+borda, 2, 8, 0);
+    int cor = 8;
+    if(modulo(a->val->eq) >= max_eq){
+        cor = 2;
+    }
+    
+    tela_retangulo(a->val->x-borda, a->val->y-borda, final_x+borda, final_y+borda, 2, cor, 0);
     if(a->esq != NULL){
         int final_esq_x = a->esq->val->x+a->esq->val->largura+30;
-        tela_linha(a->val->x-borda, final_y+borda, final_esq_x+borda, a->esq->val->y-borda, 2, 8);
+        tela_linha(a->val->x-borda, final_y+borda, final_esq_x+borda, a->esq->val->y-borda, 2, cor);
     }
     if(a->dir != NULL){
-        tela_linha(final_x+borda, final_y+borda, a->dir->val->x-borda, a->dir->val->y-borda, 2, 8);
+        tela_linha(final_x+borda, final_y+borda, a->dir->val->x-borda, a->dir->val->y-borda, 2, cor);
     }
-    tela_texto_dir(a->val->x,a->val->y,30,8,a->val->palavra);
-    printa_arv(a->esq);
-    printa_arv(a->dir);
+    tela_texto_dir(a->val->x,a->val->y,30,cor,a->val->palavra);
+    printa_arv(a->esq, max_eq);
+    printa_arv(a->dir, max_eq);
 }

@@ -9,9 +9,8 @@
 
 int main(){
     Arv *a = cria_arv();
-    int tam_x = 1800, tam_y = 900;
-    tela_inicio(tam_x, tam_y, "joguinho super legal");
-
+    Jogo j = jogoIni(0);
+    
     char proxima_palavra [10];
     char palavra_digitada [10];
     char letra_digitada;
@@ -20,6 +19,8 @@ int main(){
     int eq;
     char fator_eq[3];
     int palavra_mudou = 0;
+    int max_equilibrio = 1;
+    int cor;
     clock = tela_relogio();
     tempo_aleatorio = rand()%10;
     cria_palavra(proxima_palavra);
@@ -43,26 +44,29 @@ int main(){
         else if(letra_digitada!=0){
             seta_ultima_letra(palavra_digitada, letra_digitada, 10);
         }
-        eq = fator_equilibrio(a, 3);
+        arruma_altura(a);
+        eq = fator_equilibrio(a);
         calcula_x_arv(a, 0);
         calcula_y_arv(a, 50, 30);
-        printa_arv(a);
+        printa_arv(a, max_equilibrio);
         to_char(eq, fator_eq);
-        if(eq<=1 && eq>=-1){
-            tela_texto(800,50,30,8, fator_eq);
+        if(eq<max_equilibrio && eq>max_equilibrio*-1){
+            cor = 8;
         }
-        else if(eq<=2 && eq>=-2){
-            tela_texto(800,50,30,2, fator_eq);
+        else if(eq==max_equilibrio || eq==max_equilibrio*-1){
+            cor = 2;
         }
         else{
             break;
+            // tela_texto(800,50,30,2, fator_eq);
             // TODO: tela de derrota
         }
+        tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX,j->tela_total->iniY,30,cor, fator_eq);
         tela_texto(100,50,20,8,"proxima palavra:");
         tela_texto(100,50,20,8,"proxima palavra:");
         tela_texto(275,50,20,8,proxima_palavra);
-        tela_texto(125,tam_y-50,20,8,"palavra sendo escrita:");
-        tela_texto(300,tam_y-50,20,8,palavra_digitada);
+        tela_texto(125,j->tela_total->tamY-j->tela_total->iniY,20,8,"palavra sendo escrita:");
+        tela_texto(300,j->tela_total->tamY-j->tela_total->iniY,20,8,palavra_digitada);
         tela_atualiza();
     }
     tela_fim();
