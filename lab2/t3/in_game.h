@@ -19,26 +19,30 @@ typedef struct palavra{
     char proxima_palavra [10];
     char palavra_digitada [10];
     char letra_digitada; 
-    int palavra_mudou;
     int tamanho_letra;
 } *Palavra;
 typedef struct relogio{
     double clock_total;
     double clock_utlima_mudanca;
     int tempo_aleatorio;
+    int palavra_mudou;
 } *Relogio;
 typedef struct jogo{
     Espaco tela_total;
     Espaco header;
     Espaco footer;
-    Palavra palavras;
+    Palavra palavra;
     Relogio relogio;
     Arv *arvore;
-
+    int max_equilibrio;
 } *Jogo; 
 
+
+void verifica_tempo(Relogio relogio, int tempo_max);
+void troca_palavra(Jogo j);
+
 Jogo cria_jogo();
-Jogo jogoIni(int tam);
+Jogo jogoIni(int tam, int temp_max, int max_eq);
 void jogoFim();
 
 void remove_ultima_letra(char *p);

@@ -11,14 +11,15 @@ Espaco cria_espaco(){
     assert(e != NULL);
     return e;
 }
-Jogo cria_jogo(){
-    Jogo j = (Jogo)malloc(sizeof(struct jogo));
-    assert(j != NULL);
-    j->tela_total = cria_espaco();
-    j->header = cria_espaco();
-    j->footer = cria_espaco();
-
-    return j;
+Palavra cria_palavra_str(){
+    Palavra p = (Palavra)malloc(sizeof(struct palavra));
+    assert(p != NULL);
+    return p;
+}
+Relogio cria_relogio(){
+    Relogio r = (Relogio)malloc(sizeof(struct relogio));
+    assert(r != NULL);
+    return r;
 }
 void seta_tela(Espaco tela, int tamX, int tamY, int bordaX, int bordaY){
     tela->iniX = bordaX;
@@ -26,7 +27,48 @@ void seta_tela(Espaco tela, int tamX, int tamY, int bordaX, int bordaY){
     tela->tamX = tamX-bordaX;
     tela->tamY = tamY-bordaY;
 }
-Jogo jogoIni(int tam){
+void ini_relogio(Relogio relogio, int tempo_max){
+    relogio->clock_total = tela_relogio();
+    relogio->clock_utlima_mudanca = tela_relogio();
+    relogio->tempo_aleatorio = rand()%tempo_max;
+}
+void ini_palavra(Palavra palavra){
+    cria_palavra(palavra->proxima_palavra);
+}
+void troca_palavra(Jogo j){
+    j->arvore = insere(j->arvore, j->palavra->proxima_palavra);
+    cria_palavra(j->palavra->proxima_palavra);
+}
+void verifica_tempo(Relogio relogio, int tempo_max){
+    if(tela_relogio()>=relogio->clock_utlima_mudanca+relogio->tempo_aleatorio){
+        relogio->clock_utlima_mudanca = tela_relogio();
+        relogio->tempo_aleatorio = rand()%tempo_max;
+        relogio->palavra_mudou = 1;
+    }
+    else{
+        relogio->palavra_mudou = 0;
+    }
+}
+int controle_palavra(double ini_temp, int demora){
+    double temp_atual = tela_relogio();
+    if(temp_atual >= (ini_temp)+demora){
+        return 1;
+    }
+    return 0;
+}
+Jogo cria_jogo(){
+    Jogo j = (Jogo)malloc(sizeof(struct jogo));
+    assert(j != NULL);
+    j->tela_total = cria_espaco();
+    j->header = cria_espaco();
+    j->footer = cria_espaco();
+    j->palavra = cria_palavra_str();
+    j->relogio = cria_relogio();
+
+    return j;
+}
+
+Jogo jogoIni(int tam, int temp_max, int max_eq){
     Jogo j = cria_jogo();
     if(tam == 0){
         seta_tela(j->tela_total, 1000, 500, 5, 10);
@@ -42,8 +84,12 @@ Jogo jogoIni(int tam){
     else{
         exit(1);
     }
-
     tela_inicio(j->tela_total->tamX+(2*j->tela_total->iniX), j->tela_total->tamY+(2*j->tela_total->iniY), "joguinho super legal");
+    ini_palavra(j->palavra);
+    ini_relogio(j->relogio, temp_max);
+    j->arvore = cria_arv();
+
+    j->max_equilibrio = max_eq;
     return j;
 }
 void jogoFim(){
@@ -68,13 +114,6 @@ void seta_ultima_letra(char *p, char l, int tam){
             break;
         }
     }
-}
-int controle_palavra(double ini_temp, int demora){
-    double temp_atual = tela_relogio();
-    if(temp_atual >= (ini_temp)+demora){
-        return 1;
-    }
-    return 0;
 }
 void to_char(int n, char *palavra){
     char modulo;
