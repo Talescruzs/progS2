@@ -23,6 +23,7 @@ typedef struct input_p{
     char palavra_digitada [10];
     char letra_digitada; 
     int tamanho_letra;
+    int tentou_remover;
 } *Input_p;
 typedef struct relogio{
     double clock_total;

@@ -57,9 +57,11 @@ void verifica_tempo(Relogio relogio, int tempo_max){
 }
 void controle_input(Jogo j){
     j->input_p->letra_digitada = tela_tecla();
+    j->input_p->tentou_remover = 0;
     if(j->input_p->letra_digitada=='\n'){
         j->arvore = remover_no(j->arvore, j->input_p->palavra_digitada);
         j->input_p->palavra_digitada[0] = '\0';
+        j->input_p->tentou_remover = 1;
     }
     else if(j->input_p->letra_digitada=='\b'){
         remove_ultima_letra(j->input_p->palavra_digitada);

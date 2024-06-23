@@ -19,10 +19,13 @@ int main(){
         }
         controle_input(j);
 
-        arruma_altura(j->arvore);
-        eq = fator_equilibrio(j->arvore);
-        calcula_x_arv(j->arvore, 0);
-        calcula_y_arv(j->arvore, 50, 30);
+        if(j->relogio->palavra_mudou || j->input_p->tentou_remover){
+            arruma_altura(j->arvore);
+            eq = fator_equilibrio(j->arvore);
+            calcula_x_arv(j->arvore, 0);
+            calcula_y_arv(j->arvore, 50, 30);
+        }
+
         printa_arv(j->arvore, j->max_equilibrio);
         to_char(eq, fator_eq);
         if(eq<j->max_equilibrio && eq>j->max_equilibrio*-1){
