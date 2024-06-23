@@ -16,11 +16,14 @@ typedef struct espaco{
     int tamY;
 } *Espaco;
 typedef struct palavra{
-    char proxima_palavra [10];
+    char palavra [10];
+    int tamanho_letra;
+} *Palavra;
+typedef struct input_p{
     char palavra_digitada [10];
     char letra_digitada; 
     int tamanho_letra;
-} *Palavra;
+} *Input_p;
 typedef struct relogio{
     double clock_total;
     double clock_utlima_mudanca;
@@ -31,7 +34,8 @@ typedef struct jogo{
     Espaco tela_total;
     Espaco header;
     Espaco footer;
-    Palavra palavra;
+    Input_p input_p;
+    Palavra prox_p;
     Relogio relogio;
     Arv *arvore;
     int max_equilibrio;
@@ -39,6 +43,8 @@ typedef struct jogo{
 
 
 void verifica_tempo(Relogio relogio, int tempo_max);
+void controle_input(Jogo j);
+
 void troca_palavra(Jogo j);
 
 Jogo cria_jogo();
