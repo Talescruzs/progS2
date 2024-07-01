@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <assert.h>
+#include <stdio.h>
 #include "grafo.h"
 
 // Lista de nós
@@ -43,4 +44,25 @@ void grafo_destroi(Grafo self){
         nos = temp;
     }
     free(self);
+}
+int grafo_insere_no(Grafo self, void *pdado){
+    No *l_nos = self->nos;
+    if(l_nos==NULL){
+        l_nos= (No*)malloc(sizeof(No));
+        l_nos->valor = (void *)malloc(self->tam_no);
+        l_nos->valor = pdado;
+        l_nos->numero = 1;
+        self->nos = l_nos;
+        return l_nos->numero;
+    }
+    while(l_nos->prox!=NULL){
+        l_nos = l_nos->prox;
+    }
+    l_nos->prox = (No*)malloc(sizeof(No));
+    No *novo = l_nos->prox;
+    novo->valor = (void *)malloc(self->tam_no);
+    novo->valor = pdado;
+    novo->numero = l_nos->numero+1;
+    
+    return novo->numero;
 }
