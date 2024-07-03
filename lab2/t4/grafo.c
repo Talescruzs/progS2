@@ -23,6 +23,24 @@ struct _grafo{
     int tam_aresta;
     int tam_no;
 };
+
+void printa_grafo(Grafo self){
+    No *nos = self->nos;
+    Aresta *arestas = self->arestas;
+    printf("Arestas:\n");
+    while(arestas != NULL){
+        Aresta *temp = arestas->prox;
+        printf("nada\n");
+        arestas = temp;
+    }
+    printf("Nos:\n");
+    while(nos != NULL){
+        No *temp = nos->prox;
+        printf("%d\n", nos->numero);
+        nos = temp;
+    }
+}
+
 Grafo grafo_cria(int tam_no, int tam_aresta) {
     Grafo g = (struct _grafo*)malloc(sizeof(struct _grafo));
     assert(g != NULL);
@@ -51,7 +69,7 @@ int grafo_insere_no(Grafo self, void *pdado){
         l_nos= (No*)malloc(sizeof(No));
         l_nos->valor = (void *)malloc(self->tam_no);
         l_nos->valor = pdado;
-        l_nos->numero = 1;
+        l_nos->numero = 0;
         self->nos = l_nos;
         return l_nos->numero;
     }
@@ -63,6 +81,27 @@ int grafo_insere_no(Grafo self, void *pdado){
     novo->valor = (void *)malloc(self->tam_no);
     novo->valor = pdado;
     novo->numero = l_nos->numero+1;
-    
     return novo->numero;
+}
+void grafo_remove_no(Grafo self, int no){
+    No *l_nos = self->nos;
+    No *no_ant = l_nos;
+    if(l_nos==NULL) return;
+    if(no == 0){
+        self->nos = l_nos->prox;
+        free(l_nos);
+        return;
+    }
+    // while(l_nos->numero<no && l_nos->prox != NULL){
+    //     no_ant = l_nos;
+    //     l_nos = l_nos->prox;
+    // }
+    // if(l_nos->numero!=no) return;
+    // no_ant->prox = l_nos->prox;
+    // free(l_nos);
+    // no_ant = no_ant->prox;
+    while(no_ant->prox != NULL){
+        no_ant->numero --;
+        no_ant = no_ant->prox;
+    }
 }

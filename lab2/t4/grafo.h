@@ -7,6 +7,8 @@
 
 typedef struct _grafo *Grafo;
 
+void printa_grafo(Grafo self);
+
 // funções que implementam as operações básicas de um grafo
 //
 // um grafo é constituido por nós e arestas que os interligam.
