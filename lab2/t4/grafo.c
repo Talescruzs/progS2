@@ -84,23 +84,29 @@ int grafo_insere_no(Grafo self, void *pdado){
     return novo->numero;
 }
 void grafo_remove_no(Grafo self, int no){
+    if(self->nos==NULL) return;
+
     No *l_nos = self->nos;
-    No *no_ant = l_nos;
-    if(l_nos==NULL) return;
+    No *no_ant = self->nos;
     if(no == 0){
         self->nos = l_nos->prox;
         free(l_nos);
+        while(no_ant != NULL){
+            no_ant->numero --;
+            no_ant = no_ant->prox;
+        }
         return;
     }
-    // while(l_nos->numero<no && l_nos->prox != NULL){
-    //     no_ant = l_nos;
-    //     l_nos = l_nos->prox;
-    // }
-    // if(l_nos->numero!=no) return;
-    // no_ant->prox = l_nos->prox;
-    // free(l_nos);
-    // no_ant = no_ant->prox;
-    while(no_ant->prox != NULL){
+
+    while(l_nos->numero<no && l_nos != NULL){
+        no_ant = l_nos;
+        l_nos = l_nos->prox;
+    }
+    if(l_nos->numero!=no) return;
+    no_ant->prox = l_nos->prox;
+    free(l_nos);
+    no_ant = no_ant->prox;
+    while(no_ant != NULL){
         no_ant->numero --;
         no_ant = no_ant->prox;
     }

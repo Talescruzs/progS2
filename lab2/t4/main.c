@@ -6,7 +6,7 @@ int main(){
     int v_dado = 5;
     int *dado = &v_dado;
     int n_no;
-    // grafo_remove_no(g, v_dado);
+    grafo_remove_no(g, v_dado);
     printa_grafo(g);
     printf("Começa inserir\n");
     for(int i = 0; i<10; i++){
