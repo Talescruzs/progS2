@@ -98,7 +98,7 @@ void grafo_remove_no(Grafo self, int no){
         return;
     }
 
-    while(l_nos->numero<no && l_nos != NULL){
+    while(l_nos->prox != NULL && l_nos->numero<no){
         no_ant = l_nos;
         l_nos = l_nos->prox;
     }

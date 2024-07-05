@@ -17,7 +17,7 @@ int main(){
     }
     // v_dado = 1;
     printf("Começa remover\n");
-    for(int i = 0; i<3; i++){
+    for(int i = 0; i<6; i++){
         grafo_remove_no(g, i);
         printa_grafo(g);
     }
