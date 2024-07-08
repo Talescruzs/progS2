@@ -134,3 +134,13 @@ void grafo_valor_no(Grafo self, int no, void *pdado){
     if(l_nos->numero!=no) return;
     memcpy(pdado, l_nos->valor, self->tam_no);
 }
+int grafo_nnos(Grafo self){
+    if(self->nos == NULL) return 0;
+    int count = 0;
+    No *l_nos = self->nos;
+    while(l_nos != NULL){
+        l_nos=l_nos->prox;
+        count++;
+    }
+    return count;
+}
