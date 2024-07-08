@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 #include "grafo.h"
 
 typedef struct aresta Ares;
@@ -20,28 +21,36 @@ typedef struct aresta {
 
 struct _grafo{
     No *nos;
-    // Aresta *arestas;
     int tam_aresta;
     int tam_no;
 };
-
+No *cria_no(int numero, void *pdado, int tam_no){
+    No* no = (No*)malloc(sizeof(No));
+    no->valor = (void *)malloc(tam_no);
+    memcpy(no->valor, pdado, tam_no);
+    no->numero = numero;
+    return no;
+}
 void printa_grafo(Grafo self){
     No *nos = self->nos;
-    // Aresta *arestas = self->arestas;
-    // printf("Arestas:\n");
-    // while(arestas != NULL){
-    //     Aresta *temp = arestas->prox;
-    //     printf("nada\n");
-    //     arestas = temp;
-    // }
     printf("Nos:\n");
     while(nos != NULL){
         No *temp = nos->prox;
-        printf("%d\n", nos->numero);
+        printf("Numero: %d\n", nos->numero);
+        int *d = nos->valor;
+        printf("Dado: %d\n", *d);
+        Aresta *arestas = nos->arestas;
+        if(arestas!=NULL){
+            printf("Arestas:\n");
+            while(arestas != NULL){
+                Aresta *tempA = arestas->prox;
+                printf("nada\n");
+                arestas = tempA;
+            }
+        }
         nos = temp;
     }
 }
-
 Grafo grafo_cria(int tam_no, int tam_aresta) {
     Grafo g = (struct _grafo*)malloc(sizeof(struct _grafo));
     assert(g != NULL);
@@ -65,24 +74,17 @@ void grafo_destroi(Grafo self){
     free(self);
 }
 int grafo_insere_no(Grafo self, void *pdado){
-    No *l_nos = self->nos;
-    if(l_nos==NULL){
-        l_nos= (No*)malloc(sizeof(No));
-        l_nos->valor = (void *)malloc(self->tam_no);
-        l_nos->valor = pdado;
-        l_nos->numero = 0;
+    if(self->nos==NULL){
+        No *l_nos = cria_no(0, pdado, self->tam_no);
         self->nos = l_nos;
         return l_nos->numero;
     }
+    No *l_nos = self->nos;
     while(l_nos->prox!=NULL){
         l_nos = l_nos->prox;
     }
-    l_nos->prox = (No*)malloc(sizeof(No));
-    No *novo = l_nos->prox;
-    novo->valor = (void *)malloc(self->tam_no);
-    novo->valor = pdado;
-    novo->numero = l_nos->numero+1;
-    return novo->numero;
+    l_nos->prox = cria_no(l_nos->numero+1, pdado, self->tam_no);
+    return l_nos->prox->numero;
 }
 void grafo_remove_no(Grafo self, int no){
     if(self->nos==NULL) return;
@@ -111,4 +113,14 @@ void grafo_remove_no(Grafo self, int no){
         no_ant->numero --;
         no_ant = no_ant->prox;
     }
+}
+void grafo_altera_valor_no(Grafo self, int no, void *pdado){
+    if(self->nos==NULL) return;
+    No *l_nos = self->nos;
+
+    while(l_nos->prox != NULL && l_nos->numero<no){
+        l_nos = l_nos->prox;
+    }
+    if(l_nos->numero!=no) return;
+    memcpy(l_nos->valor, pdado, self->tam_no);
 }

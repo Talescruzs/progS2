@@ -11,17 +11,21 @@ int main(){
     printf("Começa inserir\n");
     for(int i = 0; i<10; i++){
         n_no = grafo_insere_no(g, dado);
-        printf("%d\n", n_no);
+        printf("qtd nos: %d\n", n_no);
         v_dado++;
-        printa_grafo(g);
+        // printa_grafo(g);
     }
-    // v_dado = 1;
+    printa_grafo(g);
+    v_dado = 1;
+    grafo_altera_valor_no(g, 3, dado);
+    printa_grafo(g);
     printf("Começa remover\n");
     for(int i = 0; i<6; i++){
         grafo_remove_no(g, i);
-        printa_grafo(g);
+        // printa_grafo(g);
     }
     // printf("AAAA\n");
+    printa_grafo(g);
     grafo_destroi(g);
     return 0;
 }
