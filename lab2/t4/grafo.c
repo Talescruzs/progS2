@@ -15,6 +15,8 @@ typedef struct no {
 // Lista de arestas
 typedef struct aresta {
     void *peso;
+    int origem;
+    int destino;
     No *fim;
     struct aresta *prox;
 } Aresta;
@@ -44,7 +46,8 @@ void printa_grafo(Grafo self){
             printf("Arestas:\n");
             while(arestas != NULL){
                 Aresta *tempA = arestas->prox;
-                printf("nada\n");
+                float *p = arestas->peso;
+                printf("%f\n", *p);
                 arestas = tempA;
             }
         }
@@ -143,4 +146,43 @@ int grafo_nnos(Grafo self){
         count++;
     }
     return count;
+}
+
+Aresta *cria_aresta(void *peso, int tam_aresta){
+    Aresta* aresta = (Aresta*)malloc(sizeof(Aresta));
+    aresta->peso = (void *)malloc(tam_aresta);
+    memcpy(aresta->peso, peso, tam_aresta);
+    return aresta;
+}
+void insere_aresta(Grafo self, int destino, void *pdado, No *origem){
+    if(self->nos == NULL) return;
+    No *l_nos = self->nos;
+    while(l_nos->prox != NULL && l_nos->numero<destino){
+        l_nos = l_nos->prox;
+    }
+    if(l_nos->numero!=destino) return;
+    Aresta *aresta = cria_aresta(pdado, self->tam_aresta);
+    aresta->fim = l_nos;
+    aresta->origem = origem->numero;
+    aresta->destino = l_nos->numero;
+
+    Aresta *l_arestas = origem->arestas;
+    if(l_arestas==NULL){
+        origem->arestas = aresta;
+        return;
+    }
+    while(l_arestas->prox!=NULL){
+        l_arestas = l_arestas->prox;
+    }
+    l_arestas->prox = aresta;
+}
+
+void grafo_altera_valor_aresta(Grafo self, int origem, int destino, void *pdado){
+    if(self->nos == NULL) return;
+    No *l_nos = self->nos;
+    while(l_nos->prox != NULL && l_nos->numero<origem){
+        l_nos = l_nos->prox;
+    }
+    if(l_nos->numero!=origem) return;
+    if(pdado!=NULL) insere_aresta(self, destino, pdado, l_nos);
 }

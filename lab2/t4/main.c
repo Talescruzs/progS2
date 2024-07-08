@@ -5,6 +5,8 @@ int main(){
     Grafo g = grafo_cria(sizeof(int), sizeof(float));
     int v_dado = 5;
     int *dado = &v_dado;
+    float v_dado2 = 5.5;
+    float *dado2 = &v_dado2;
     grafo_remove_no(g, v_dado);
     printa_grafo(g);
     printf("Começa inserir\n");
@@ -27,6 +29,9 @@ int main(){
     }
     // printf("AAAA\n");
     printa_grafo(g);
+    grafo_altera_valor_aresta(g, 1, 2, dado2);
+    printa_grafo(g);
+
     grafo_destroi(g);
     return 0;
 }
