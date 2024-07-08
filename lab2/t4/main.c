@@ -21,7 +21,7 @@ int main(){
         grafo_remove_no(g, i);
         printa_grafo(g);
     }
-    printf("AAAA\n");
+    // printf("AAAA\n");
     grafo_destroi(g);
     return 0;
 }

@@ -3,36 +3,37 @@
 #include <stdio.h>
 #include "grafo.h"
 
+typedef struct aresta Ares;
 // Lista de nós
 typedef struct no {
     void *valor;
     int numero;
+    Ares *arestas;
     struct no *prox;
 } No;
 // Lista de arestas
 typedef struct aresta {
     void *peso;
-    No *ini;
     No *fim;
     struct aresta *prox;
 } Aresta;
 
 struct _grafo{
     No *nos;
-    Aresta *arestas;
+    // Aresta *arestas;
     int tam_aresta;
     int tam_no;
 };
 
 void printa_grafo(Grafo self){
     No *nos = self->nos;
-    Aresta *arestas = self->arestas;
-    printf("Arestas:\n");
-    while(arestas != NULL){
-        Aresta *temp = arestas->prox;
-        printf("nada\n");
-        arestas = temp;
-    }
+    // Aresta *arestas = self->arestas;
+    // printf("Arestas:\n");
+    // while(arestas != NULL){
+    //     Aresta *temp = arestas->prox;
+    //     printf("nada\n");
+    //     arestas = temp;
+    // }
     printf("Nos:\n");
     while(nos != NULL){
         No *temp = nos->prox;
@@ -50,13 +51,13 @@ Grafo grafo_cria(int tam_no, int tam_aresta) {
 }
 void grafo_destroi(Grafo self){
     No *nos = self->nos;
-    Aresta *arestas = self->arestas;
-    while(arestas != NULL){
-        Aresta *temp = arestas->prox;
-        free(arestas);
-        arestas = temp;
-    }
     while(nos != NULL){
+        Aresta *arestas = nos->arestas;
+        while(arestas != NULL){
+            Aresta *temp = arestas->prox;
+            free(arestas);
+            arestas = temp;
+        }
         No *temp = nos->prox;
         free(nos);
         nos = temp;
