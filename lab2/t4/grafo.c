@@ -124,3 +124,13 @@ void grafo_altera_valor_no(Grafo self, int no, void *pdado){
     if(l_nos->numero!=no) return;
     memcpy(l_nos->valor, pdado, self->tam_no);
 }
+void grafo_valor_no(Grafo self, int no, void *pdado){
+    if(self->nos==NULL) return;
+    No *l_nos = self->nos;
+
+    while(l_nos->prox != NULL && l_nos->numero<no){
+        l_nos = l_nos->prox;
+    }
+    if(l_nos->numero!=no) return;
+    memcpy(pdado, l_nos->valor, self->tam_no);
+}

@@ -18,6 +18,8 @@ int main(){
     printa_grafo(g);
     v_dado = 1;
     grafo_altera_valor_no(g, 3, dado);
+    grafo_valor_no(g, 2, dado);
+    printf("valor de 2: %d\n", *dado);
     printa_grafo(g);
     printf("Começa remover\n");
     for(int i = 0; i<6; i++){
