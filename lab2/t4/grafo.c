@@ -47,7 +47,7 @@ void printa_grafo(Grafo self){
             while(arestas != NULL){
                 Aresta *tempA = arestas->prox;
                 float *p = arestas->peso;
-                printf("%f\n", *p);
+                printf("De %d a %d com peso %f\n", arestas->origem, arestas->destino, *p);
                 arestas = tempA;
             }
         }
@@ -165,6 +165,7 @@ void insere_aresta(Grafo self, int destino, void *pdado, No *origem){
     aresta->fim = l_nos;
     aresta->origem = origem->numero;
     aresta->destino = l_nos->numero;
+    aresta->prox = NULL;
 
     Aresta *l_arestas = origem->arestas;
     if(l_arestas==NULL){

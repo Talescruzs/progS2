@@ -10,26 +10,27 @@ int main(){
     grafo_remove_no(g, v_dado);
     printa_grafo(g);
     printf("Começa inserir\n");
-    for(int i = 0; i<10; i++){
+    for(int i = 0; i<5; i++){
         grafo_insere_no(g, dado);
-        printf("qtd nos: %d\n", grafo_nnos(g));
         v_dado++;
-        // printa_grafo(g);
     }
     printa_grafo(g);
+    grafo_valor_no(g, 3, dado);
+    printf("valor de 3: %d\n", *dado);
     v_dado = 1;
+    printf("MUDA\n");
     grafo_altera_valor_no(g, 3, dado);
-    grafo_valor_no(g, 2, dado);
-    printf("valor de 2: %d\n", *dado);
+    grafo_valor_no(g, 3, dado);
+    printf("valor de 3: %d\n", *dado);
     printa_grafo(g);
     printf("Começa remover\n");
-    for(int i = 0; i<6; i++){
+    for(int i = 0; i<2; i++){
         grafo_remove_no(g, i);
-        // printa_grafo(g);
     }
-    // printf("AAAA\n");
     printa_grafo(g);
+    printf("ADD ARESTA\n");
     grafo_altera_valor_aresta(g, 1, 2, dado2);
+    grafo_altera_valor_aresta(g, 1, 0, dado2);
     printa_grafo(g);
 
     grafo_destroi(g);
