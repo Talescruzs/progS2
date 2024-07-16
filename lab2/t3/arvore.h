@@ -1,5 +1,6 @@
 #ifndef _arvore_h_ 
 #define _arvore_h_
+#include <stdbool.h>
 typedef struct dado{
     char palavra[10];
     int x;
@@ -20,6 +21,8 @@ Arv* cria_arv();
 Arv* insere(Arv *a, char *palavra);
 Arv* remover_no(Arv *a, char *p);
 void printa_arv_velho(Arv *base, int espaco);
+
+bool compara_arv(Arv *a, Arv *b);
 
 int modulo(int n);
 

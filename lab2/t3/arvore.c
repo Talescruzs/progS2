@@ -5,6 +5,8 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+
 //  internas
 int vazia(Arv *a){
     if(a == NULL) return 1;
@@ -149,6 +151,16 @@ void printa_arv_velho(Arv *a, int espaco) {
     printf("y: %d\n", a->val->y);
     printa_arv_velho(a->esq, espaco);
 }
+
+bool compara_arv(Arv *a, Arv *b){
+    if(a==NULL||b==NULL) return (a==NULL&&b==NULL);
+    if(!compara_arv(a->esq, b->esq)) return false;
+    if(!compara_arv(a->dir, b->dir)) return false;
+    if(iguais(a->val->palavra, b->val->palavra)) return true;
+    return false;
+}
+
+
 void printa_arv(Arv *a, int max_eq) {
     if (vazia(a)) return;
     int final_x = a->val->x+a->val->largura+30;

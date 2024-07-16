@@ -40,6 +40,8 @@ typedef struct jogo{
     Relogio relogio;
     Arv *arvore;
     int max_equilibrio;
+    int pontos;
+    int dificuldade;
 } *Jogo; 
 
 
@@ -49,14 +51,16 @@ void controle_input(Jogo j);
 void troca_palavra(Jogo j);
 
 Jogo cria_jogo();
-Jogo jogoIni(int tam, int temp_max, int max_eq);
+Jogo jogoIni(int tam, int temp_max, int max_eq, int dificuldade);
 void jogoFim();
 
 void remove_ultima_letra(char *p);
 void seta_ultima_letra(char *p, char l, int tam);
 int controle_palavra(double ini_temp, int demora);
-void to_char(int n, char *palavra);
-
 void cria_palavra(char *palavra);
+
+int tela_jogo(Jogo j);
+
+void salva_recorde(char* jogador, int recorde);
 
 #endif

@@ -177,7 +177,9 @@ void insere_aresta(Grafo self, int destino, void *pdado, No *origem){
     }
     l_arestas->prox = aresta;
 }
-
+void remove_aresta(int destino, No *origem){
+    
+}
 void grafo_altera_valor_aresta(Grafo self, int origem, int destino, void *pdado){
     if(self->nos == NULL) return;
     No *l_nos = self->nos;
@@ -186,4 +188,5 @@ void grafo_altera_valor_aresta(Grafo self, int origem, int destino, void *pdado)
     }
     if(l_nos->numero!=origem) return;
     if(pdado!=NULL) insere_aresta(self, destino, pdado, l_nos);
+    else remove_aresta(destino, l_nos);
 }
