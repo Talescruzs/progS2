@@ -221,6 +221,8 @@ Jogo ini_tela(){
 }
 void tela_menu(Jogo j){
     int corbt=8;
+    int posX = 0;
+    int posY = 0;
     seta_bt(j, j->tela_total->tamX/5, j->tela_total->tamY/7, j->tela_total->iniX+(j->tela_total->tamX/5)*0.5, j->tela_total->tamY-(j->tela_total->tamY/7)*4, 3, "FACIL");
     seta_bt(j, j->tela_total->tamX/5, j->tela_total->tamY/7, j->tela_total->iniX+(j->tela_total->tamX/5)*2, j->tela_total->tamY-(j->tela_total->tamY/7)*4, 2, "MEDIO");
     seta_bt(j, j->tela_total->tamX/5, j->tela_total->tamY/7, j->tela_total->iniX+(j->tela_total->tamX/5)*3.5, j->tela_total->tamY-(j->tela_total->tamY/7)*4, 1, "DIFICIL");
@@ -230,10 +232,20 @@ void tela_menu(Jogo j){
         tela_texto_dir((j->tela_total->tamX/2)-j->tam_letra*7,j->tela_total->iniY,j->tam_letra,8,"USUARIO:");
         tela_texto_dir((j->tela_total->tamX/2),j->tela_total->iniY,j->tam_letra,8,j->input_p->palavra_digitada);
         Botao temp = j->bts;
+        tela_rato_pos(&posX, &posY);
+        tela_circulo(posX, posY, 2*j->tam_letra/10, 0, 8, 8);
         while(temp!=NULL){
+            if(posX>=temp->esp->iniX&&posX<=temp->esp->iniX+temp->esp->tamX&&posY>=temp->esp->iniY&&posY<=temp->esp->iniY+temp->esp->tamY){
+                corbt = 2;
+                if(tela_rato_apertado()){
+                    j->dificuldade = temp->retorno;
+                    return;
+                }
+            }
             tela_retangulo(temp->esp->iniX, temp->esp->iniY, temp->esp->iniX+temp->esp->tamX, temp->esp->iniY+temp->esp->tamY, 2, corbt, 0);
             tela_texto(temp->esp->iniX+(temp->esp->tamX/2),temp->esp->iniY+(temp->esp->tamY/2),j->tam_letra,corbt,temp->palavra);
             temp = temp->prox;
+            corbt = 8;
         }
         tela_atualiza();
     }
