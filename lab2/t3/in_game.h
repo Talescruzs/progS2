@@ -20,14 +20,21 @@ typedef struct botao{
     char palavra[10];
     struct botao *prox; 
 } *Botao;
-typedef struct palavra{
+typedef struct recorde{
+    Espaco esp;
+    int pts;
+    char usuario[10];
+    char dificuldade[10];
+    struct recorde *prox; 
+} *Recorde;
+typedef struct palavra{ // retirar
     char palavra [10];
     int tamanho_letra;
 } *Palavra;
 typedef struct input_p{
     char palavra_digitada [10];
     char letra_digitada; 
-    int tamanho_letra;
+    int tamanho_letra;  // retirar
     int tentou_remover;
 } *Input_p;
 typedef struct relogio{
@@ -44,6 +51,7 @@ typedef struct jogo{
     Palavra prox_p;
     Relogio relogio;
     Botao bts;
+    Recorde recorde;
     Arv *arvore;
     int max_equilibrio;
     int pontos;

@@ -14,7 +14,14 @@ Espaco cria_espaco(){
 Botao cria_bt(){
     Botao b = (Botao)malloc(sizeof(struct botao));
     assert(b != NULL);
+    b->esp = cria_espaco();
     return b;
+}
+Recorde cria_recorde(){
+    Recorde r = (Recorde)malloc(sizeof(struct recorde));
+    assert(r != NULL);
+    r->esp = cria_espaco();
+    return r;
 }
 Palavra cria_palavra_str(){
     Palavra p = (Palavra)malloc(sizeof(struct palavra));
@@ -40,7 +47,6 @@ void seta_tela(Espaco tela, int tamX, int tamY, int bordaX, int bordaY){
 void seta_bt(Jogo j, int tamX, int tamY, int iniX, int iniY, int retorno, char *palavra){
     if(j->bts==NULL){
         j->bts = cria_bt();
-        j->bts->esp = cria_espaco();
         j->bts->esp->iniX = iniX;
         j->bts->esp->iniY = iniY;
         j->bts->esp->tamY = tamY;
@@ -55,7 +61,6 @@ void seta_bt(Jogo j, int tamX, int tamY, int iniX, int iniY, int retorno, char *
             temp=temp->prox;
         }
         Botao prox = cria_bt();
-        prox->esp = cria_espaco();
         prox->esp->iniX = iniX;
         prox->esp->iniY = iniY;
         prox->esp->tamX = tamX;
@@ -66,6 +71,50 @@ void seta_bt(Jogo j, int tamX, int tamY, int iniX, int iniY, int retorno, char *
         temp->prox = prox;
     }
     
+}
+void le_recorde(Jogo j){
+    FILE *arq;
+    arq = fopen("recorde.txt", "r");
+    if(arq == NULL){
+        printf("Erro, nao foi possivel abrir o arquivo\n");
+        fclose(arq);
+        exit(1); 
+    }
+    char nome[10];
+    int pontos;
+    char dificuldade[10];
+    int count = 0;
+    
+    Recorde temp = j->recorde;
+    while (fscanf(arq, "%s %d %s", nome, &pontos, dificuldade) == 3) {
+        temp->pts = pontos;
+        strcpy(temp->usuario, nome);
+        strcpy(temp->dificuldade, dificuldade);
+        if(count == 0){
+            temp->esp->iniX = j->tela_total->iniX+(j->tela_total->tamX/5)*2;
+            temp->esp->iniY = 50+(j->tela_total->tamY/5)*1;
+            temp->esp->tamX = j->tela_total->tamX/4;
+            temp->esp->tamY = j->tela_total->tamY/7;
+        }
+        else if(count == 1){
+            temp->esp->iniX = j->tela_total->iniX+(j->tela_total->tamX/5)*1;
+            temp->esp->iniY = 50+(j->tela_total->tamY/5)*2;
+            temp->esp->tamX = j->tela_total->tamX/4;
+            temp->esp->tamY = j->tela_total->tamY/7;
+        }
+        if(count == 2){
+            temp->esp->iniX = j->tela_total->iniX+(j->tela_total->tamX/5)*3;
+            temp->esp->iniY = 50+(j->tela_total->tamY/5)*2;
+            temp->esp->tamX = j->tela_total->tamX/4;
+            temp->esp->tamY = j->tela_total->tamY/7;
+            temp->prox = NULL;
+            break;
+        }
+        temp->prox=cria_recorde();
+        temp = temp->prox;
+        count++;
+    }
+    fclose(arq);
 }
 void destroi_bts(Jogo j){
     if(j->bts==NULL) return;
@@ -328,22 +377,47 @@ void tela_recordes(Jogo j){
     int corbt=8;
     int posX = 0;
     int posY = 0;
-    seta_bt(j, j->tela_total->tamX/5, j->tela_total->tamY/7, j->tela_total->iniX+(j->tela_total->tamX/5)*2, j->tela_total->tamY-(j->tela_total->tamY/7)*2, 0, "VOLTAR");
+    int count = 1;
+    char pontos[10];
+    char ranking[2];
+    seta_bt(j, j->tela_total->tamX/4, j->tela_total->tamY/7, j->tela_total->iniX+(j->tela_total->tamX/5)*2, j->tela_total->tamY-(j->tela_total->tamY/7)*2, 0, "VOLTAR");
+    j->recorde = cria_recorde();
+    le_recorde(j);
     while(1){
-        Botao temp = j->bts;
+        Recorde tempr = j->recorde;
         tela_rato_pos(&posX, &posY);
         tela_circulo(posX, posY, 2*j->tam_letra/10, 0, 8, 8);
-        while(temp!=NULL){
-            if(posX>=temp->esp->iniX&&posX<=temp->esp->iniX+temp->esp->tamX&&posY>=temp->esp->iniY&&posY<=temp->esp->iniY+temp->esp->tamY){
+        tela_texto(j->tela_total->tamX/2, j->tela_total->iniY+50,j->tam_letra,8,"Hall da fama");
+        while(tempr!=NULL){
+            if(posX>=tempr->esp->iniX&&posX<=tempr->esp->iniX+tempr->esp->tamX&&posY>=tempr->esp->iniY&&posY<=tempr->esp->iniY+tempr->esp->tamY){
+                corbt = 3;
+            }
+            tela_retangulo(tempr->esp->iniX, tempr->esp->iniY, tempr->esp->iniX+tempr->esp->tamX, tempr->esp->iniY+tempr->esp->tamY, 2, corbt, 0);
+            sprintf(ranking, "%d", count);
+            strcat(ranking, ":");
+            tela_texto_dir(tempr->esp->iniX-j->tam_letra*2, tempr->esp->iniY+(tempr->esp->tamY/2.5),j->tam_letra,corbt,ranking);
+            sprintf(pontos, "%d", tempr->pts);
+            strcat(pontos, "p");
+            tela_texto_dir(tempr->esp->iniX+5, tempr->esp->iniY+(tempr->esp->tamY/2.5),j->tam_letra,corbt,pontos);
+            tela_texto(tempr->esp->iniX+tempr->esp->tamX/2, tempr->esp->iniY+(tempr->esp->tamY/2.5),j->tam_letra,corbt,tempr->usuario);
+            tela_texto_esq(tempr->esp->iniX+tempr->esp->tamX-5, tempr->esp->iniY+(tempr->esp->tamY/2.5),j->tam_letra,corbt,tempr->dificuldade);
+            tempr = tempr->prox;
+            corbt = 8;
+            count++;
+        }
+        count = 1;
+        Botao  tempbt = j->bts;
+        while(tempbt!=NULL){
+            if(posX>=tempbt->esp->iniX&&posX<=tempbt->esp->iniX+tempbt->esp->tamX&&posY>=tempbt->esp->iniY&&posY<=tempbt->esp->iniY+tempbt->esp->tamY){
                 corbt = 2;
                 if(tela_rato_clicado()){
                     destroi_bts(j);
                     return;
                 }
             }
-            tela_retangulo(temp->esp->iniX, temp->esp->iniY, temp->esp->iniX+temp->esp->tamX, temp->esp->iniY+temp->esp->tamY, 2, corbt, 0);
-            tela_texto(temp->esp->iniX+(temp->esp->tamX/2),temp->esp->iniY+(temp->esp->tamY/2),j->tam_letra,corbt,temp->palavra);
-            temp = temp->prox;
+            tela_retangulo(tempbt->esp->iniX, tempbt->esp->iniY, tempbt->esp->iniX+tempbt->esp->tamX, tempbt->esp->iniY+tempbt->esp->tamY, 2, corbt, 0);
+            tela_texto(tempbt->esp->iniX+(tempbt->esp->tamX/2),tempbt->esp->iniY+(tempbt->esp->tamY/2),j->tam_letra,corbt,tempbt->palavra);
+            tempbt = tempbt->prox;
             corbt = 8;
         }
         tela_atualiza();
@@ -358,13 +432,13 @@ void salva_recorde(char* jogador, int recorde, int dificuldade){
         exit(1); 
     }
     if(dificuldade==1){
-        fprintf(arq, "%s: %d - dificil\n", jogador, recorde);
+        fprintf(arq, "%s %d dificil\n", jogador, recorde);
     }
     else if(dificuldade==2){
-        fprintf(arq, "%s: %d - medio\n", jogador, recorde);
+        fprintf(arq, "%s %d medio\n", jogador, recorde);
     }
     else if(dificuldade==3){
-        fprintf(arq, "%s: %d - facil\n", jogador, recorde);
+        fprintf(arq, "%s %d facil\n", jogador, recorde);
     }
     fclose(arq);
 }
