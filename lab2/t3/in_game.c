@@ -11,6 +11,11 @@ Espaco cria_espaco(){
     assert(e != NULL);
     return e;
 }
+Botao cria_bt(){
+    Botao b = (Botao)malloc(sizeof(struct botao));
+    assert(b != NULL);
+    return b;
+}
 Palavra cria_palavra_str(){
     Palavra p = (Palavra)malloc(sizeof(struct palavra));
     assert(p != NULL);
@@ -31,6 +36,34 @@ void seta_tela(Espaco tela, int tamX, int tamY, int bordaX, int bordaY){
     tela->iniY = bordaY;
     tela->tamX = tamX-bordaX;
     tela->tamY = tamY-bordaY;
+}
+void seta_bt(Jogo j, int tamX, int tamY, int iniX, int iniY, int retorno, char *palavra){
+    if(j->bts==NULL){
+        j->bts = cria_bt();
+        j->bts->esp = cria_espaco();
+        j->bts->esp->iniX = iniX;
+        j->bts->esp->iniY = iniY;
+        j->bts->esp->tamY = tamY;
+        j->bts->esp->tamX = tamX;
+        j->bts->retorno = retorno;
+        strcpy(j->bts->palavra, palavra);
+    }
+    else{
+        Botao temp = j->bts;
+        while(temp->prox != NULL){
+            temp=temp->prox;
+        }
+        Botao prox = cria_bt();
+        prox->esp = cria_espaco();
+        prox->esp->iniX = iniX;
+        prox->esp->iniY = iniY;
+        prox->esp->tamX = tamX;
+        prox->esp->tamY = tamY;
+        prox->retorno = retorno;
+        strcpy(prox->palavra, palavra);
+        temp->prox = prox;
+    }
+    
 }
 void ini_relogio(Relogio relogio, int tempo_max){
     relogio->clock_total = tela_relogio();
@@ -63,8 +96,6 @@ void controle_input(Jogo j){
         j->arvore = remover_no(j->arvore, j->input_p->palavra_digitada);
         if(!compara_arv(arv_ant, j->arvore)){
             j->pontos = j->pontos+(5*j->dificuldade);
-            printf("mudou\n");
-            // j->arvore->foi_mudada = 0;
         }
         j->input_p->palavra_digitada[0] = '\0';
         j->input_p->tentou_remover = 1;
@@ -76,6 +107,7 @@ void controle_input(Jogo j){
         seta_ultima_letra(j->input_p->palavra_digitada, j->input_p->letra_digitada, 9);
     }
 }
+
 int controle_palavra(double ini_temp, int demora){
     double temp_atual = tela_relogio();
     if(temp_atual >= (ini_temp)+demora){
@@ -97,34 +129,12 @@ Jogo cria_jogo(){
     return j;
 }
 
-Jogo jogoIni(int tam, int temp_max, int max_eq, int dificuldade){
-    Jogo j = cria_jogo();
-    int tam_letra;
-    if(tam == 0){
-        seta_tela(j->tela_total, 1000, 500, 5, 10);
-        seta_tela(j->header, 150, 500, 0, 0);
-        seta_tela(j->footer, 150, 500, 0, 0);
-        tam_letra = 30;
-    }
-    else if(tam == 1){
-        seta_tela(j->tela_total, 1400, 700, 5, 10);
-        tam_letra = 25;
-    }
-    else if(tam == 2){
-        seta_tela(j->tela_total, 1800, 900, 5, 10);
-        tam_letra = 20;
-    }
-    else{
-        exit(1);
-    }
-    tela_inicio(j->tela_total->tamX+(2*j->tela_total->iniX), j->tela_total->tamY+(2*j->tela_total->iniY), "joguinho super legal");
-    ini_palavra(j->prox_p, tam_letra);
+void jogoIni(int temp_max, int max_eq, int dificuldade, Jogo j){
     ini_relogio(j->relogio, temp_max);
     j->arvore = cria_arv();
 
     j->max_equilibrio = max_eq;
     j->dificuldade = dificuldade;
-    return j;
 }
 void jogoFim(){
     ;
@@ -180,10 +190,53 @@ void cria_palavra(char *palavra){
     fclose(arq);
 }    
 void atualiza_game();
-
 //  TELAS:
-void tela_menu(){
-
+Jogo ini_tela(){
+    int tam = 0;
+    while(tam<=0||tam>3){
+        printf("TAMANHOS DE TELA:\n1- pequena(1000X500)\n2- media(1400X700)\n3- grande(1800X900)\nInsira o tamanho desejado:\n");
+        scanf("%d", &tam);
+    }
+    Jogo j = cria_jogo();
+    if(tam == 1){
+        seta_tela(j->tela_total, 1000, 500, 5, 10);
+        seta_tela(j->header, 150, 500, 0, 0);
+        seta_tela(j->footer, 150, 500, 0, 0);
+        j->tam_letra = 20;
+    }
+    else if(tam == 2){
+        seta_tela(j->tela_total, 1400, 700, 5, 10);
+        j->tam_letra = 25;
+    }
+    else if(tam == 3){
+        seta_tela(j->tela_total, 1800, 900, 5, 10);
+        j->tam_letra = 30;
+    }
+    else{
+        exit(1);
+    }
+    tela_inicio(j->tela_total->tamX+(2*j->tela_total->iniX), j->tela_total->tamY+(2*j->tela_total->iniY), "joguinho super legal");
+    ini_palavra(j->prox_p, j->tam_letra);
+    return j;
+}
+void tela_menu(Jogo j){
+    int corbt=8;
+    seta_bt(j, j->tela_total->tamX/5, j->tela_total->tamY/7, j->tela_total->iniX+(j->tela_total->tamX/5)*0.5, j->tela_total->tamY-(j->tela_total->tamY/7)*4, 3, "FACIL");
+    seta_bt(j, j->tela_total->tamX/5, j->tela_total->tamY/7, j->tela_total->iniX+(j->tela_total->tamX/5)*2, j->tela_total->tamY-(j->tela_total->tamY/7)*4, 2, "MEDIO");
+    seta_bt(j, j->tela_total->tamX/5, j->tela_total->tamY/7, j->tela_total->iniX+(j->tela_total->tamX/5)*3.5, j->tela_total->tamY-(j->tela_total->tamY/7)*4, 1, "DIFICIL");
+    seta_bt(j, j->tela_total->tamX/5, j->tela_total->tamY/7, j->tela_total->iniX+(j->tela_total->tamX/5)*2, j->tela_total->tamY-(j->tela_total->tamY/7)*2, 0, "RECORDES");
+    while(1){
+        controle_input(j);
+        tela_texto_dir((j->tela_total->tamX/2)-j->tam_letra*7,j->tela_total->iniY,j->tam_letra,8,"USUARIO:");
+        tela_texto_dir((j->tela_total->tamX/2),j->tela_total->iniY,j->tam_letra,8,j->input_p->palavra_digitada);
+        Botao temp = j->bts;
+        while(temp!=NULL){
+            tela_retangulo(temp->esp->iniX, temp->esp->iniY, temp->esp->iniX+temp->esp->tamX, temp->esp->iniY+temp->esp->tamY, 2, corbt, 0);
+            tela_texto(temp->esp->iniX+(temp->esp->tamX/2),temp->esp->iniY+(temp->esp->tamY/2),j->tam_letra,corbt,temp->palavra);
+            temp = temp->prox;
+        }
+        tela_atualiza();
+    }
 }
 int tela_jogo(Jogo j){
     int eq = 0;
@@ -220,15 +273,14 @@ int tela_jogo(Jogo j){
             // tela_texto(800,50,30,2, fator_eq);
             // TODO: tela de derrota
         }
-        tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX-50,j->tela_total->iniY,30,cor, "Equilibrio");
-        tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX,j->tela_total->iniY,30,cor, fator_eq);
-        tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX-150,j->tela_total->iniY+30,30,8, "Pontos");
-        tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX,j->tela_total->iniY+30,30,8, pontos);
-        tela_texto(100,50,20,8,"proxima palavra:");
-        tela_texto(100,50,20,8,"proxima palavra:");
-        tela_texto(275,50,20,8,j->prox_p->palavra);
-        tela_texto(125,j->tela_total->tamY-j->tela_total->iniY,20,8,"palavra sendo escrita:");
-        tela_texto(300,j->tela_total->tamY-j->tela_total->iniY,20,8,j->input_p->palavra_digitada);
+        tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX-50,j->tela_total->iniY,j->tam_letra,cor, "Equilibrio");
+        tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX,j->tela_total->iniY,j->tam_letra,cor, fator_eq);
+        tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX-150,j->tela_total->iniY+30,j->tam_letra,8, "Pontos");
+        tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX,j->tela_total->iniY+30,j->tam_letra,8, pontos);
+        tela_texto_dir(0,50,j->tam_letra,8,"proxima palavra:");
+        tela_texto_dir(j->tam_letra*10,50,j->tam_letra,8,j->prox_p->palavra);
+        tela_texto_dir(0,j->tela_total->tamY-j->tela_total->iniY,j->tam_letra,8,"palavra sendo escrita:");
+        tela_texto_dir(j->tam_letra*12,j->tela_total->tamY-j->tela_total->iniY,j->tam_letra,8,j->input_p->palavra_digitada);
         tela_atualiza();
     }
 }

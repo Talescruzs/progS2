@@ -8,13 +8,18 @@
 // #define pequena 0
 // #define media 1
 // #define grande 2
-
 typedef struct espaco{
     int iniX;
     int iniY;
     int tamX;
     int tamY;
 } *Espaco;
+typedef struct botao{
+    Espaco esp;
+    int retorno;
+    char palavra[10];
+    struct botao *prox; 
+} *Botao;
 typedef struct palavra{
     char palavra [10];
     int tamanho_letra;
@@ -38,11 +43,13 @@ typedef struct jogo{
     Input_p input_p;
     Palavra prox_p;
     Relogio relogio;
+    Botao bts;
     Arv *arvore;
     int max_equilibrio;
     int pontos;
     int dificuldade;
-} *Jogo; 
+    int tam_letra;
+} *Jogo;
 
 
 void verifica_tempo(Relogio relogio, int tempo_max);
@@ -51,14 +58,16 @@ void controle_input(Jogo j);
 void troca_palavra(Jogo j);
 
 Jogo cria_jogo();
-Jogo jogoIni(int tam, int temp_max, int max_eq, int dificuldade);
+void jogoIni(int temp_max, int max_eq, int dificuldade, Jogo j);
 void jogoFim();
+
+Jogo ini_tela();
 
 void remove_ultima_letra(char *p);
 void seta_ultima_letra(char *p, char l, int tam);
 int controle_palavra(double ini_temp, int demora);
 void cria_palavra(char *palavra);
-
+void tela_menu(Jogo j);
 int tela_jogo(Jogo j);
 
 void salva_recorde(char* jogador, int recorde);

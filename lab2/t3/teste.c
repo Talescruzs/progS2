@@ -8,7 +8,9 @@
 #include <time.h>
 
 int main(){
-    Jogo j = jogoIni(2, 10, 2, 3);
+    Jogo j = ini_tela();
+    jogoIni(10, 2, 3, j);
+    tela_menu(j);
     int teste = tela_jogo(j);
     char* a= "teste";
     salva_recorde(a, teste);
