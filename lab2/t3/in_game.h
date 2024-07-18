@@ -49,6 +49,7 @@ typedef struct jogo{
     int pontos;
     int dificuldade;
     int tam_letra;
+    char jogador [10];
 } *Jogo;
 
 
@@ -68,8 +69,8 @@ void seta_ultima_letra(char *p, char l, int tam);
 int controle_palavra(double ini_temp, int demora);
 void cria_palavra(char *palavra);
 void tela_menu(Jogo j);
-int tela_jogo(Jogo j);
+void tela_jogo(Jogo j);
 
-void salva_recorde(char* jogador, int recorde);
+void salva_recorde(char* jogador, int recorde, int dificuldade);
 
 #endif

@@ -9,14 +9,15 @@
 
 int main(){
     Jogo j = ini_tela();
-    jogoIni(10, 2, 3, j);
+    j->dificuldade=0;
     tela_menu(j);
     if(j->dificuldade == 0){
         printf("fazer a tela dos recordes\n");
     }
-    int teste = tela_jogo(j);
-    char* a= "teste";
-    salva_recorde(a, teste);
+    else{
+        tela_jogo(j);
+        salva_recorde(j->jogador, j->pontos, j->dificuldade);
+    }
     tela_fim();
     return 0;
 }

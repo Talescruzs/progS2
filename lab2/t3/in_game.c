@@ -238,7 +238,17 @@ void tela_menu(Jogo j){
             if(posX>=temp->esp->iniX&&posX<=temp->esp->iniX+temp->esp->tamX&&posY>=temp->esp->iniY&&posY<=temp->esp->iniY+temp->esp->tamY){
                 corbt = 2;
                 if(tela_rato_apertado()){
-                    j->dificuldade = temp->retorno;
+                    strcpy(j->jogador, j->input_p->palavra_digitada);
+                    j->input_p->palavra_digitada[0] = '\0';
+                    if(temp->retorno == 3){
+                        jogoIni(10, 3, 3, j);
+                    }
+                    else if(temp->retorno == 2){
+                        jogoIni(6, 2, 2, j);
+                    }
+                    else if(temp->retorno == 1){
+                        jogoIni(4, 1, 1, j);
+                    }
                     return;
                 }
             }
@@ -250,7 +260,7 @@ void tela_menu(Jogo j){
         tela_atualiza();
     }
 }
-int tela_jogo(Jogo j){
+void tela_jogo(Jogo j){
     int eq = 0;
     char pontos[10];
     char fator_eq[3];
@@ -281,7 +291,7 @@ int tela_jogo(Jogo j){
             cor = 2;
         }
         else{
-            return j->pontos;
+            return;
             // tela_texto(800,50,30,2, fator_eq);
             // TODO: tela de derrota
         }
@@ -289,6 +299,8 @@ int tela_jogo(Jogo j){
         tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX,j->tela_total->iniY,j->tam_letra,cor, fator_eq);
         tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX-150,j->tela_total->iniY+30,j->tam_letra,8, "Pontos");
         tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX,j->tela_total->iniY+30,j->tam_letra,8, pontos);
+        tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX-200,j->tela_total->iniY+60,j->tam_letra,8, "Jogador");
+        tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX,j->tela_total->iniY+60,j->tam_letra,8, j->jogador);
         tela_texto_dir(0,50,j->tam_letra,8,"proxima palavra:");
         tela_texto_dir(j->tam_letra*10,50,j->tam_letra,8,j->prox_p->palavra);
         tela_texto_dir(0,j->tela_total->tamY-j->tela_total->iniY,j->tam_letra,8,"palavra sendo escrita:");
@@ -297,7 +309,7 @@ int tela_jogo(Jogo j){
     }
 }
 
-void salva_recorde(char* jogador, int recorde){
+void salva_recorde(char* jogador, int recorde, int dificuldade){
     FILE *arq;
     arq = fopen("recorde.txt", "a");
     if(arq == NULL){
@@ -305,7 +317,15 @@ void salva_recorde(char* jogador, int recorde){
         fclose(arq);
         exit(1); 
     }
-    fprintf(arq, "%s: %d\n", jogador, recorde);
+    if(dificuldade==1){
+        fprintf(arq, "%s: %d - dificil\n", jogador, recorde);
+    }
+    else if(dificuldade==2){
+        fprintf(arq, "%s: %d - medio\n", jogador, recorde);
+    }
+    else if(dificuldade==3){
+        fprintf(arq, "%s: %d - facil\n", jogador, recorde);
+    }
 
     fclose(arq);
 
