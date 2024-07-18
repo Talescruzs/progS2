@@ -70,6 +70,7 @@ int controle_palavra(double ini_temp, int demora);
 void cria_palavra(char *palavra);
 void tela_menu(Jogo j);
 void tela_jogo(Jogo j);
+void tela_recordes(Jogo j);
 
 void salva_recorde(char* jogador, int recorde, int dificuldade);
 

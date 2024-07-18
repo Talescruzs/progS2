@@ -10,13 +10,18 @@
 int main(){
     Jogo j = ini_tela();
     j->dificuldade=0;
-    tela_menu(j);
-    if(j->dificuldade == 0){
-        printf("fazer a tela dos recordes\n");
-    }
-    else{
-        tela_jogo(j);
-        salva_recorde(j->jogador, j->pontos, j->dificuldade);
+    while(j->dificuldade!=-1){
+        tela_menu(j);
+        tela_atualiza();
+        if(j->dificuldade == 0){
+            tela_recordes(j);
+            tela_atualiza();
+        }
+        else{
+            tela_jogo(j);
+            salva_recorde(j->jogador, j->pontos, j->dificuldade);
+            tela_atualiza();
+        }
     }
     tela_fim();
     return 0;

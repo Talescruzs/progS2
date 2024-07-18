@@ -46,6 +46,7 @@ void seta_bt(Jogo j, int tamX, int tamY, int iniX, int iniY, int retorno, char *
         j->bts->esp->tamY = tamY;
         j->bts->esp->tamX = tamX;
         j->bts->retorno = retorno;
+        j->bts->prox = NULL;
         strcpy(j->bts->palavra, palavra);
     }
     else{
@@ -60,10 +61,21 @@ void seta_bt(Jogo j, int tamX, int tamY, int iniX, int iniY, int retorno, char *
         prox->esp->tamX = tamX;
         prox->esp->tamY = tamY;
         prox->retorno = retorno;
+        prox->prox = NULL;
         strcpy(prox->palavra, palavra);
         temp->prox = prox;
     }
     
+}
+void destroi_bts(Jogo j){
+    if(j->bts==NULL) return;
+
+    while(j->bts != NULL){
+        Botao temp = j->bts;
+        j->bts=j->bts->prox;
+        free(temp->esp);
+        free(temp);
+    }
 }
 void ini_relogio(Relogio relogio, int tempo_max){
     relogio->clock_total = tela_relogio();
@@ -237,7 +249,7 @@ void tela_menu(Jogo j){
         while(temp!=NULL){
             if(posX>=temp->esp->iniX&&posX<=temp->esp->iniX+temp->esp->tamX&&posY>=temp->esp->iniY&&posY<=temp->esp->iniY+temp->esp->tamY){
                 corbt = 2;
-                if(tela_rato_apertado()){
+                if(tela_rato_clicado()){
                     strcpy(j->jogador, j->input_p->palavra_digitada);
                     j->input_p->palavra_digitada[0] = '\0';
                     if(temp->retorno == 3){
@@ -249,6 +261,10 @@ void tela_menu(Jogo j){
                     else if(temp->retorno == 1){
                         jogoIni(4, 1, 1, j);
                     }
+                    else if(temp->retorno == 0){
+                        j->dificuldade = temp->retorno;
+                    }
+                    destroi_bts(j);
                     return;
                 }
             }
@@ -308,7 +324,31 @@ void tela_jogo(Jogo j){
         tela_atualiza();
     }
 }
-
+void tela_recordes(Jogo j){
+    int corbt=8;
+    int posX = 0;
+    int posY = 0;
+    seta_bt(j, j->tela_total->tamX/5, j->tela_total->tamY/7, j->tela_total->iniX+(j->tela_total->tamX/5)*2, j->tela_total->tamY-(j->tela_total->tamY/7)*2, 0, "VOLTAR");
+    while(1){
+        Botao temp = j->bts;
+        tela_rato_pos(&posX, &posY);
+        tela_circulo(posX, posY, 2*j->tam_letra/10, 0, 8, 8);
+        while(temp!=NULL){
+            if(posX>=temp->esp->iniX&&posX<=temp->esp->iniX+temp->esp->tamX&&posY>=temp->esp->iniY&&posY<=temp->esp->iniY+temp->esp->tamY){
+                corbt = 2;
+                if(tela_rato_clicado()){
+                    destroi_bts(j);
+                    return;
+                }
+            }
+            tela_retangulo(temp->esp->iniX, temp->esp->iniY, temp->esp->iniX+temp->esp->tamX, temp->esp->iniY+temp->esp->tamY, 2, corbt, 0);
+            tela_texto(temp->esp->iniX+(temp->esp->tamX/2),temp->esp->iniY+(temp->esp->tamY/2),j->tam_letra,corbt,temp->palavra);
+            temp = temp->prox;
+            corbt = 8;
+        }
+        tela_atualiza();
+    }
+}
 void salva_recorde(char* jogador, int recorde, int dificuldade){
     FILE *arq;
     arq = fopen("recorde.txt", "a");
@@ -326,7 +366,5 @@ void salva_recorde(char* jogador, int recorde, int dificuldade){
     else if(dificuldade==3){
         fprintf(arq, "%s: %d - facil\n", jogador, recorde);
     }
-
     fclose(arq);
-
 }
