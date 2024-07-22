@@ -139,10 +139,12 @@ void troca_palavra(Jogo j){
     j->arvore = insere(j->arvore, j->prox_p->palavra);
     cria_palavra(j->prox_p->palavra);
 }
-void verifica_tempo(Relogio relogio, int tempo_max){
+void verifica_tempo(Relogio relogio, int tempo_max, int tempo_min){
     if(tela_relogio()>=relogio->clock_utlima_mudanca+relogio->tempo_aleatorio){
         relogio->clock_utlima_mudanca = tela_relogio();
-        relogio->tempo_aleatorio = rand()%tempo_max;
+        while(relogio->tempo_aleatorio<tempo_min){
+            relogio->tempo_aleatorio = rand()%tempo_max;
+        }
         relogio->palavra_mudou = 1;
     }
     else{
@@ -180,8 +182,6 @@ Jogo cria_jogo(){
     Jogo j = (Jogo)malloc(sizeof(struct jogo));
     assert(j != NULL);
     j->tela_total = cria_espaco();
-    j->header = cria_espaco();
-    j->footer = cria_espaco();
     j->prox_p = cria_palavra_str();
     j->input_p = cria_input_p();
     j->relogio = cria_relogio();
@@ -261,8 +261,6 @@ Jogo ini_tela(){
     Jogo j = cria_jogo();
     if(tam == 1){
         seta_tela(j->tela_total, 1000, 500, 5, 10);
-        seta_tela(j->header, 150, 500, 0, 0);
-        seta_tela(j->footer, 150, 500, 0, 0);
         j->tam_letra = 20;
     }
     else if(tam == 2){
@@ -288,6 +286,7 @@ void tela_menu(Jogo j){
     seta_bt(j, j->tela_total->tamX/5, j->tela_total->tamY/7, j->tela_total->iniX+(j->tela_total->tamX/5)*2, j->tela_total->tamY-(j->tela_total->tamY/7)*4, 2, "MEDIO");
     seta_bt(j, j->tela_total->tamX/5, j->tela_total->tamY/7, j->tela_total->iniX+(j->tela_total->tamX/5)*3.5, j->tela_total->tamY-(j->tela_total->tamY/7)*4, 1, "DIFICIL");
     seta_bt(j, j->tela_total->tamX/5, j->tela_total->tamY/7, j->tela_total->iniX+(j->tela_total->tamX/5)*2, j->tela_total->tamY-(j->tela_total->tamY/7)*2, 0, "RECORDES");
+    seta_bt(j, j->tela_total->tamX/10, j->tela_total->tamY/10, j->tela_total->iniX+(j->tela_total->tamX/5)*4, j->tela_total->tamY-(j->tela_total->tamY/7)*1, -1, "FECHAR");
     while(1){
         controle_input(j);
         tela_texto_dir((j->tela_total->tamX/2)-j->tam_letra*7,j->tela_total->iniY,j->tam_letra,8,"USUARIO:");
@@ -310,7 +309,7 @@ void tela_menu(Jogo j){
                     else if(temp->retorno == 1){
                         jogoIni(4, 1, 1, j);
                     }
-                    else if(temp->retorno == 0){
+                    else{
                         j->dificuldade = temp->retorno;
                     }
                     destroi_bts(j);
@@ -330,8 +329,9 @@ void tela_jogo(Jogo j){
     char pontos[10];
     char fator_eq[3];
     int cor;
+    char tempo[10];
     while(1){
-        verifica_tempo(j->relogio, 10);
+        verifica_tempo(j->relogio, 3*j->dificuldade, j->dificuldade);
         if(j->relogio->palavra_mudou){
             troca_palavra(j);
             j->pontos+=2*j->dificuldade;
@@ -366,10 +366,14 @@ void tela_jogo(Jogo j){
         tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX,j->tela_total->iniY+30,j->tam_letra,8, pontos);
         tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX-200,j->tela_total->iniY+60,j->tam_letra,8, "Jogador");
         tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX,j->tela_total->iniY+60,j->tam_letra,8, j->jogador);
-        tela_texto_dir(0,50,j->tam_letra,8,"proxima palavra:");
+
+        sprintf(tempo, "%lf", j->relogio->tempo_aleatorio-(tela_relogio()-j->relogio->clock_utlima_mudanca));
+        tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX-200,j->tela_total->tamY-j->tela_total->iniY-10,j->tam_letra,8, "Tempo");
+        tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX,j->tela_total->tamY-j->tela_total->iniY-10,j->tam_letra,8, tempo);
+        tela_texto_dir(10,50,j->tam_letra,8,"proxima palavra:");
         tela_texto_dir(j->tam_letra*10,50,j->tam_letra,8,j->prox_p->palavra);
-        tela_texto_dir(0,j->tela_total->tamY-j->tela_total->iniY,j->tam_letra,8,"palavra sendo escrita:");
-        tela_texto_dir(j->tam_letra*12,j->tela_total->tamY-j->tela_total->iniY,j->tam_letra,8,j->input_p->palavra_digitada);
+        tela_texto_dir(10,j->tela_total->tamY-j->tela_total->iniY-10,j->tam_letra,8,"palavra sendo escrita:");
+        tela_texto_dir(j->tam_letra*12,j->tela_total->tamY-j->tela_total->iniY-10,j->tam_letra,8,j->input_p->palavra_digitada);
         tela_atualiza();
     }
 }

@@ -45,8 +45,6 @@ typedef struct relogio{
 } *Relogio;
 typedef struct jogo{
     Espaco tela_total;
-    Espaco header;
-    Espaco footer;
     Input_p input_p;
     Palavra prox_p;
     Relogio relogio;
@@ -61,7 +59,7 @@ typedef struct jogo{
 } *Jogo;
 
 
-void verifica_tempo(Relogio relogio, int tempo_max);
+void verifica_tempo(Relogio relogio, int tempo_max, int tempo_min);
 void controle_input(Jogo j);
 
 void troca_palavra(Jogo j);
