@@ -1,3 +1,6 @@
-valquiria,300,facil
-benhur,75,medio
-tales,50,dificil
+valquiria 300 facil
+benhur 75 medio
+tales 50 dificil
+teste 24 dificil
+te 13 dificil
+teste 6 dificil

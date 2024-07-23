@@ -21,6 +21,7 @@ Recorde cria_recorde(){
     Recorde r = (Recorde)malloc(sizeof(struct recorde));
     assert(r != NULL);
     r->esp = cria_espaco();
+    r->prox = NULL;
     return r;
 }
 Palavra cria_palavra_str(){
@@ -86,7 +87,7 @@ void le_recorde(Jogo j){
     int count = 0;
     
     Recorde temp = j->recorde;
-    while (fscanf(arq, "%s,%d,%s", nome, &pontos, dificuldade) == 3) {
+    while (fscanf(arq, "%s %d %s", nome, &pontos, dificuldade) == 3) {
         temp->pts = pontos;
         strcpy(temp->usuario, nome);
         strcpy(temp->dificuldade, dificuldade);
@@ -437,11 +438,47 @@ void tela_recordes(Jogo j){
 void salva_recorde(char* jogador, int recorde, int dificuldade){
     FILE *arq;
     FILE *arqesc;
+    Recorde r = cria_recorde();
+    Recorde temp = r;
+    char nome[10];
+    int pontos;
+    char dificuldades[100];
     arq = fopen("recorde.txt", "r");
     if(arq == NULL){
         printf("Erro, nao foi possivel abrir o arquivo\n");
         fclose(arq);
         exit(1); 
+    }
+    while(fscanf(arq, "%s %d %s", nome, &pontos, dificuldades)==3){
+        temp->prox = cria_recorde();
+        temp = temp->prox;
+        temp->pts = pontos;
+        strcpy(temp->usuario, nome);
+        strcpy(temp->dificuldade, dificuldades);
+    }
+    temp = r->prox;
+    free(r->esp);
+    free(r);
+    r = temp;
+    int flag = 0;
+    Recorde novo = cria_recorde();
+    novo->pts = recorde;
+    strcpy(novo->usuario, jogador);
+    if(dificuldade==3) strcpy(novo->dificuldade, "facil");
+    else if(dificuldade==2) strcpy(novo->dificuldade, "medio");
+    else if(dificuldade==1) strcpy(novo->dificuldade, "dificil");
+    
+    while(temp->prox!=NULL && flag==0){
+        if(recorde>temp->prox->pts){
+            novo->prox = temp->prox;
+            temp->prox = novo;
+            flag = 1;
+        }
+        if(flag==0) temp = temp->prox;
+    }
+    if(flag==0){
+        temp->prox = novo;
+        novo->prox = NULL;
     }
     arqesc = fopen("recorde.txt", "w");
     if(arqesc == NULL){
@@ -449,43 +486,14 @@ void salva_recorde(char* jogador, int recorde, int dificuldade){
         fclose(arqesc);
         exit(1); 
     }
-    Recorde r = cria_recorde();
-    Recorde temp = r;
-    Recorde novo = cria_recorde();
-    novo->pts = recorde;
-    strcpy(novo->usuario, jogador);
-    if(dificuldade==3) strcpy(novo->dificuldade, "facil");
-    else if(dificuldade==2) strcpy(novo->dificuldade, "medio");
-    else if(dificuldade==1) strcpy(novo->dificuldade, "dificil");
-
-    char nome[10];
-    int pontos;
-    char dificuldades[100];
-    
-    printf("LENDO:\n");
-    while(fscanf(arq, "%s,%d,%s", nome, &pontos, dificuldades)==3){
-        temp->pts = pontos;
-        strcpy(temp->usuario, nome);
-        strcpy(temp->dificuldade, dificuldades);
-        printf("%s, %d, %s\n", temp->usuario, temp->pts, temp->dificuldade);
-        temp->prox = cria_recorde();
-        temp = temp->prox;
-    }
-    temp = r;
-    while(temp->prox!=NULL){
-        if(recorde>temp->pts){
-            novo->prox = temp->prox;
-            temp->prox = novo;
-            break;
-        }
-        temp = temp->prox;
-    }
-
-    while(r->prox!=NULL){
-        printf("%s, %d, %s\n", r->usuario, r->pts, r->dificuldade);
-        fprintf(arqesc, "%s,%d,%s\n", r->usuario, r->pts, r->dificuldade);
+    while(r!=NULL){
+        fprintf(arqesc, "%s %d %s\n", r->usuario, r->pts, r->dificuldade);
+        temp = r;
         r = r->prox;
+        free(temp->esp);
+        free(temp);
     }
     fclose(arq);
     fclose(arqesc);
+
 }
