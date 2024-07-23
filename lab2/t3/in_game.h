@@ -24,7 +24,7 @@ typedef struct recorde{
     Espaco esp;
     int pts;
     char usuario[10];
-    char dificuldade[10];
+    char dificuldade[100];
     struct recorde *prox; 
 } *Recorde;
 typedef struct palavra{ // retirar

@@ -1,12 +1,3 @@
-tales 50 dificil
-benhur 75 medio
-valquiria 300 facil 16 medio
- 6 dificil
- 141 facil
- 147 dificil
- 163 dificil
- 16 medio
-tales 27 dificil
-kaadkjasd 156 facil
- 162 dificil
- 175 dificil
+valquiria,300,facil
+benhur,75,medio
+tales,50,dificil

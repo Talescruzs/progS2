@@ -82,11 +82,11 @@ void le_recorde(Jogo j){
     }
     char nome[10];
     int pontos;
-    char dificuldade[10];
+    char dificuldade[100];
     int count = 0;
     
     Recorde temp = j->recorde;
-    while (fscanf(arq, "%s %d %s", nome, &pontos, dificuldade) == 3) {
+    while (fscanf(arq, "%s,%d,%s", nome, &pontos, dificuldade) == 3) {
         temp->pts = pontos;
         strcpy(temp->usuario, nome);
         strcpy(temp->dificuldade, dificuldade);
@@ -280,6 +280,7 @@ Jogo ini_tela(){
 }
 void tela_menu(Jogo j){
     int corbt=8;
+    int corus=8;
     int posX = 0;
     int posY = 0;
     seta_bt(j, j->tela_total->tamX/5, j->tela_total->tamY/7, j->tela_total->iniX+(j->tela_total->tamX/5)*0.5, j->tela_total->tamY-(j->tela_total->tamY/7)*4, 3, "FACIL");
@@ -289,7 +290,8 @@ void tela_menu(Jogo j){
     seta_bt(j, j->tela_total->tamX/10, j->tela_total->tamY/10, j->tela_total->iniX+(j->tela_total->tamX/5)*4, j->tela_total->tamY-(j->tela_total->tamY/7)*1, -1, "FECHAR");
     while(1){
         controle_input(j);
-        tela_texto_dir((j->tela_total->tamX/2)-j->tam_letra*7,j->tela_total->iniY,j->tam_letra,8,"USUARIO:");
+        tela_texto_dir((j->tela_total->tamX/2)-j->tam_letra*7,j->tela_total->iniY,j->tam_letra,corus,"USUARIO:");
+        corus = 8;
         tela_texto_dir((j->tela_total->tamX/2),j->tela_total->iniY,j->tam_letra,8,j->input_p->palavra_digitada);
         Botao temp = j->bts;
         tela_rato_pos(&posX, &posY);
@@ -298,22 +300,27 @@ void tela_menu(Jogo j){
             if(posX>=temp->esp->iniX&&posX<=temp->esp->iniX+temp->esp->tamX&&posY>=temp->esp->iniY&&posY<=temp->esp->iniY+temp->esp->tamY){
                 corbt = 2;
                 if(tela_rato_clicado()){
-                    strcpy(j->jogador, j->input_p->palavra_digitada);
-                    j->input_p->palavra_digitada[0] = '\0';
-                    if(temp->retorno == 3){
-                        jogoIni(10, 3, 3, j);
-                    }
-                    else if(temp->retorno == 2){
-                        jogoIni(6, 2, 2, j);
-                    }
-                    else if(temp->retorno == 1){
-                        jogoIni(4, 1, 1, j);
+                    if(j->input_p->palavra_digitada[0]=='\0'&&(temp->retorno!=0&&temp->retorno!=-1)){
+                        corus = 2;
                     }
                     else{
-                        j->dificuldade = temp->retorno;
+                        strcpy(j->jogador, j->input_p->palavra_digitada);
+                        j->input_p->palavra_digitada[0] = '\0';
+                        if(temp->retorno == 3){
+                            jogoIni(10, 3, 3, j);
+                        }
+                        else if(temp->retorno == 2){
+                            jogoIni(6, 2, 2, j);
+                        }
+                        else if(temp->retorno == 1){
+                            jogoIni(4, 1, 1, j);
+                        }
+                        else{
+                            j->dificuldade = temp->retorno;
+                        }
+                        destroi_bts(j);
+                        return;
                     }
-                    destroi_bts(j);
-                    return;
                 }
             }
             tela_retangulo(temp->esp->iniX, temp->esp->iniY, temp->esp->iniX+temp->esp->tamX, temp->esp->iniY+temp->esp->tamY, 2, corbt, 0);
@@ -429,20 +436,56 @@ void tela_recordes(Jogo j){
 }
 void salva_recorde(char* jogador, int recorde, int dificuldade){
     FILE *arq;
-    arq = fopen("recorde.txt", "a");
+    FILE *arqesc;
+    arq = fopen("recorde.txt", "r");
     if(arq == NULL){
         printf("Erro, nao foi possivel abrir o arquivo\n");
         fclose(arq);
         exit(1); 
     }
-    if(dificuldade==1){
-        fprintf(arq, "%s %d dificil\n", jogador, recorde);
+    arqesc = fopen("recorde.txt", "w");
+    if(arqesc == NULL){
+        printf("Erro, nao foi possivel abrir o arquivo\n");
+        fclose(arqesc);
+        exit(1); 
     }
-    else if(dificuldade==2){
-        fprintf(arq, "%s %d medio\n", jogador, recorde);
+    Recorde r = cria_recorde();
+    Recorde temp = r;
+    Recorde novo = cria_recorde();
+    novo->pts = recorde;
+    strcpy(novo->usuario, jogador);
+    if(dificuldade==3) strcpy(novo->dificuldade, "facil");
+    else if(dificuldade==2) strcpy(novo->dificuldade, "medio");
+    else if(dificuldade==1) strcpy(novo->dificuldade, "dificil");
+
+    char nome[10];
+    int pontos;
+    char dificuldades[100];
+    
+    printf("LENDO:\n");
+    while(fscanf(arq, "%s,%d,%s", nome, &pontos, dificuldades)==3){
+        temp->pts = pontos;
+        strcpy(temp->usuario, nome);
+        strcpy(temp->dificuldade, dificuldades);
+        printf("%s, %d, %s\n", temp->usuario, temp->pts, temp->dificuldade);
+        temp->prox = cria_recorde();
+        temp = temp->prox;
     }
-    else if(dificuldade==3){
-        fprintf(arq, "%s %d facil\n", jogador, recorde);
+    temp = r;
+    while(temp->prox!=NULL){
+        if(recorde>temp->pts){
+            novo->prox = temp->prox;
+            temp->prox = novo;
+            break;
+        }
+        temp = temp->prox;
+    }
+
+    while(r->prox!=NULL){
+        printf("%s, %d, %s\n", r->usuario, r->pts, r->dificuldade);
+        fprintf(arqesc, "%s,%d,%s\n", r->usuario, r->pts, r->dificuldade);
+        r = r->prox;
     }
     fclose(arq);
+    fclose(arqesc);
 }
