@@ -161,6 +161,7 @@ void insere_aresta(Grafo self, int destino, void *pdado, No *origem){
         l_nos = l_nos->prox;
     }
     if(l_nos->numero!=destino) return;
+
     Aresta *aresta = cria_aresta(pdado, self->tam_aresta);
     aresta->fim = l_nos;
     aresta->origem = origem->numero;
@@ -177,8 +178,19 @@ void insere_aresta(Grafo self, int destino, void *pdado, No *origem){
     }
     l_arestas->prox = aresta;
 }
+void modifica_aresta(Aresta *aresta, void *pdado, int tam_aresta){
+    memcpy(aresta->peso, pdado, tam_aresta);
+}
 void remove_aresta(int destino, No *origem){
-    
+    Aresta *l_arestas = origem->arestas;
+    Aresta *ant = origem->arestas;
+    while(l_arestas->prox != NULL && l_arestas->destino!=destino){
+        ant = l_arestas;
+        l_arestas = l_arestas->prox;
+    }
+    if(l_arestas->destino!=destino) return;
+    ant->prox = l_arestas->prox;
+    free(l_arestas);
 }
 void grafo_altera_valor_aresta(Grafo self, int origem, int destino, void *pdado){
     if(self->nos == NULL) return;
@@ -187,6 +199,19 @@ void grafo_altera_valor_aresta(Grafo self, int origem, int destino, void *pdado)
         l_nos = l_nos->prox;
     }
     if(l_nos->numero!=origem) return;
-    if(pdado!=NULL) insere_aresta(self, destino, pdado, l_nos);
-    else remove_aresta(destino, l_nos);
+    if(pdado!=NULL){
+        Aresta * l_arestas = l_nos->arestas;
+        while(l_arestas!=NULL && l_arestas->destino!=destino){
+            l_arestas = l_arestas->prox;
+        }
+        if(l_arestas==NULL||l_arestas->destino!=destino){
+            insere_aresta(self, destino, pdado, l_nos);
+        }
+        else{
+            modifica_aresta(l_arestas, pdado, self->tam_aresta);
+        }
+    }
+    else {
+        remove_aresta(destino, l_nos);
+    }
 }

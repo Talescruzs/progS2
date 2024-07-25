@@ -20,23 +20,23 @@ void printa_grafo(Grafo self);
 
 // cria um grafo vazio que suporta dados do tamanho fornecido (em bytes)
 //   nos nós e nas arestas
-Grafo grafo_cria(int tam_no, int tam_aresta);
-void grafo_destroi(Grafo self);
+Grafo grafo_cria(int tam_no, int tam_aresta);       //feito
+void grafo_destroi(Grafo self);                     //feito
 
 // Nós
 
 // insere um nó no grafo, com o dado apontado por pdado
 // retorna o número do novo nó
-int grafo_insere_no(Grafo self, void *pdado);
+int grafo_insere_no(Grafo self, void *pdado);       //feito
 // remove um nó do grafo e as arestas incidentes nesse nó
 // a identificação dos nós remanescentes é alterada, como se esse nó nunca tivesse existido
-void grafo_remove_no(Grafo self, int no);
+void grafo_remove_no(Grafo self, int no);           //feito
 // altera o valor associado a um nó (copia o valor apontado por pdado para o nó)
-void grafo_altera_valor_no(Grafo self, int no, void *pdado);
+void grafo_altera_valor_no(Grafo self, int no, void *pdado);//feito
 // coloca em pdado o valor associado a um nó
-void grafo_valor_no(Grafo self, int no, void *pdado);
+void grafo_valor_no(Grafo self, int no, void *pdado);//feito
 // retorna o número de nós do grafo
-int grafo_nnos(Grafo self);
+int grafo_nnos(Grafo self);                         //feito
 
 // Arestas
 
