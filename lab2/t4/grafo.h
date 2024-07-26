@@ -7,7 +7,7 @@
 
 typedef struct _grafo *Grafo;
 
-void printa_grafo(Grafo self);
+void printa_grafo(Grafo self);                      //para testes
 
 // funções que implementam as operações básicas de um grafo
 //
@@ -43,10 +43,10 @@ int grafo_nnos(Grafo self);                         //feito
 // altera o valor da aresta que interliga o nó origem ao nó destino (copia de *pdado)
 // caso a aresta não exista, deve ser criada
 // caso pdado seja NULL, a aresta deve ser removida
-void grafo_altera_valor_aresta(Grafo self, int origem, int destino, void *pdado);
+void grafo_altera_valor_aresta(Grafo self, int origem, int destino, void *pdado);//feito
 // coloca em pdado (se não for NULL) o valor associado à aresta, se existir
 // retorna true se a aresta entre os nós origem e destino existir, e false se não existir
-bool grafo_valor_aresta(Grafo self, int origem, int destino, void *pdado);
+bool grafo_valor_aresta(Grafo self, int origem, int destino, void *pdado);      //feito
 // inicia uma consulta a arestas que partem do nó origem
 // as próximas chamadas a 'grafo_proxima_aresta' devem retornar os valores correspondentes
 //   à cada aresta que parte desse nó

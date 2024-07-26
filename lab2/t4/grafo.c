@@ -21,11 +21,35 @@ typedef struct aresta {
     struct aresta *prox;
 } Aresta;
 
+typedef struct consultas {
+    Aresta *aresta;
+    struct consultas *prox;
+} Consulta;
+
 struct _grafo{
     No *nos;
     int tam_aresta;
     int tam_no;
+    
 };
+
+No *pega_no(Grafo self, int id){
+    No *l_nos = self->nos;
+    while(l_nos!=NULL && l_nos->numero!=id){
+        l_nos = l_nos->prox;
+    }
+    if(l_nos==NULL) return NULL;
+    return l_nos;
+} 
+Aresta *pega_aresta(No *origem, int destino){
+    Aresta *l_arestas = origem->arestas;
+    while(l_arestas!=NULL && l_arestas->destino!=destino){
+        l_arestas = l_arestas->prox;
+    }
+    if(l_arestas==NULL) return NULL;
+    return l_arestas;
+} 
+
 No *cria_no(int numero, void *pdado, int tam_no){
     No* no = (No*)malloc(sizeof(No));
     no->valor = (void *)malloc(tam_no);
@@ -214,4 +238,13 @@ void grafo_altera_valor_aresta(Grafo self, int origem, int destino, void *pdado)
     else {
         remove_aresta(destino, l_nos);
     }
+}
+
+bool grafo_valor_aresta(Grafo self, int origem, int destino, void *pdado){
+    No *l_nos = pega_no(self, origem);
+    if(l_nos == NULL) return false;
+    Aresta *aresta = pega_aresta(l_nos, destino);
+    if(aresta == NULL) return false;
+    memcpy(pdado, aresta->peso, self->tam_aresta);
+    return true;
 }

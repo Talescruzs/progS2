@@ -40,6 +40,8 @@ int main(){
     grafo_altera_valor_aresta(g, 1, 0, NULL);
     printa_grafo(g);
 
+    grafo_valor_aresta(g, 1, 2, dado2);
+    printf("Teste: %f\n", v_dado2);
 
     grafo_destroi(g);
     return 0;
