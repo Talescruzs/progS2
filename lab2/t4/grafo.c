@@ -21,16 +21,17 @@ typedef struct aresta {
     struct aresta *prox;
 } Aresta;
 
-typedef struct consultas {
+typedef struct consulta {
     Aresta *aresta;
-    struct consultas *prox;
+    bool origem;
+    struct consulta *prox;
 } Consulta;
 
 struct _grafo{
+    Consulta *consulta;
     No *nos;
     int tam_aresta;
     int tam_no;
-    
 };
 
 No *pega_no(Grafo self, int id){
@@ -81,6 +82,8 @@ void printa_grafo(Grafo self){
 Grafo grafo_cria(int tam_no, int tam_aresta) {
     Grafo g = (struct _grafo*)malloc(sizeof(struct _grafo));
     assert(g != NULL);
+    g->consulta = NULL;
+    g->nos = NULL;
     g->tam_aresta = tam_aresta;
     g->tam_no = tam_no;
     return g;
@@ -247,4 +250,65 @@ bool grafo_valor_aresta(Grafo self, int origem, int destino, void *pdado){
     if(aresta == NULL) return false;
     memcpy(pdado, aresta->peso, self->tam_aresta);
     return true;
+}
+
+Consulta *cria_consulta(Aresta *a){
+    Consulta* consulta = (Consulta*)malloc(sizeof(Consulta));
+    consulta->aresta = a;
+    consulta->prox = NULL;
+    return consulta;
+}
+
+void insere_consulta(Grafo self, Aresta a){
+    if(self->consulta == NULL){
+        self->consulta = cria_consulta(a);
+        return;
+    }
+    Consulta *c = self->consulta;
+    while(c->prox!= NULL){
+        c = c->prox;
+    }
+    c->prox = cria_consulta(a);
+}
+
+void grafo_arestas_que_partem(Grafo self, int origem){
+    No *n = pega_no(self, origem);
+    Aresta *a = n->arestas;
+    while(a!=NULL){
+        insere_consulta(self, a);
+        a = a->prox;
+    }
+    self->consulta->origem = true;
+}
+
+void grafo_arestas_que_chegam(Grafo self, int destino){
+    No *n = self->nos;
+    while(n!=NULL){
+        Aresta *a = n->arestas;
+        while(a!=NULL){
+            if(a->destino == destino){
+                insere_consulta(self, a);
+            }
+            a=a->prox;
+        }
+        n=n->prox;
+    }
+    self->consulta->origem = false;
+}
+
+bool grafo_proxima_aresta(Grafo self, int *vizinho, void *pdado){
+    Consulta *c = self->consulta;
+    if(c==NULL) return false;
+
+    if(c->origem == true){
+        *vizinho = c->aresta->fim->numero;
+    }
+    else{
+        No *n = pega_no(self, c->aresta->destino);
+        *vizinho = n->numero;
+    }
+    memcpy(pdado, aresta->peso self->tam_aresta);
+    
+    self = self->prox;
+    free(c);
 }
