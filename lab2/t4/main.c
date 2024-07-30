@@ -33,6 +33,8 @@ int main(){
     grafo_altera_valor_aresta(g, 0, 2, dado2);
     v_dado2 = 1.3;
     grafo_altera_valor_aresta(g, 1, 3, dado2);
+    v_dado2 = 3.1;
+    // grafo_altera_valor_aresta(g, 3, 1, dado2);
     v_dado2 = 1.0;
     grafo_altera_valor_aresta(g, 1, 0, dado2);
     printa_grafo(g);
@@ -64,7 +66,13 @@ int main(){
         printf("vai para %d\n", vizinho);
         printf("peso %f\n", v_dado2);
     }
-
+    printf("VERIFICA SE TEM CICLO\n");
+    if(grafo_tem_ciclo(g)){
+        printf("tem\n");
+    }
+    else{
+        printf("nao tem\n");
+    }
     grafo_destroi(g);
     return 0;
 }

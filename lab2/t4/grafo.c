@@ -9,6 +9,7 @@ typedef struct aresta Ares;
 typedef struct no {
     void *valor;
     int numero;
+    int visita;
     Ares *arestas;
     struct no *prox;
 } No;
@@ -32,6 +33,7 @@ struct _grafo{
     No *nos;
     int tam_aresta;
     int tam_no;
+    bool tem_ciclo;
 };
 
 No *pega_no(Grafo self, int id){
@@ -56,6 +58,7 @@ No *cria_no(int numero, void *pdado, int tam_no){
     no->valor = (void *)malloc(tam_no);
     memcpy(no->valor, pdado, tam_no);
     no->numero = numero;
+    no->visita = 0;
     return no;
 }
 void printa_grafo(Grafo self){
@@ -86,6 +89,7 @@ Grafo grafo_cria(int tam_no, int tam_aresta) {
     g->nos = NULL;
     g->tam_aresta = tam_aresta;
     g->tam_no = tam_no;
+    g->tem_ciclo = false;
     return g;
 }
 void grafo_destroi(Grafo self){
@@ -263,7 +267,6 @@ Consulta *cria_consulta(Aresta *a, bool origem){
 void insere_consulta(Grafo self, Aresta *a, bool origem){
     if(self->consulta == NULL){
         self->consulta = cria_consulta(a, origem);
-        printf("Criou primeira consulta\n");
         return;
     }
     Consulta *c = self->consulta;
@@ -271,7 +274,6 @@ void insere_consulta(Grafo self, Aresta *a, bool origem){
         c = c->prox;
     }
     c->prox = cria_consulta(a, origem);
-    printf("Criou proxima consulta\n");
 
 }
 
@@ -281,7 +283,6 @@ void grafo_arestas_que_partem(Grafo self, int origem){
     while(a!=NULL){
         insere_consulta(self, a, true);
         float *teste = (float*)a->peso;
-        printf("inseriu %f para %d\n", *teste, a->destino);
         a = a->prox;
     }
 }
@@ -318,4 +319,44 @@ bool grafo_proxima_aresta(Grafo self, int *vizinho, void *pdado){
     self->consulta = self->consulta->prox;
     free(c);
     return true;
+}
+
+void busca_profundidade(Grafo self, No *atual){
+    if(atual->arestas == NULL){
+        atual->visita = 2; //visitado
+        return;
+    }
+    Aresta *l_arestas = atual->arestas;
+    while(l_arestas!=NULL && !self->tem_ciclo){
+        if(l_arestas->fim->visita==1){
+            l_arestas->fim->visita = 3; // problema
+            self->tem_ciclo = true;
+            return;
+        }
+        else if(l_arestas->fim->visita==0){
+            l_arestas->fim->visita = 1;
+            busca_profundidade(self, l_arestas->fim);
+        }
+        l_arestas = l_arestas->prox;
+    }
+    atual->visita = 2; //visitado
+}
+
+bool todos_visitados(Grafo self){
+    No *l_nos = self->nos;
+    while(l_nos != NULL){
+        if(l_nos->visita!=2) return false;
+        l_nos = l_nos->prox;
+    }
+    return true;
+}
+
+bool grafo_tem_ciclo(Grafo self){
+    No *l_nos = self->nos;
+    while(l_nos != NULL && !todos_visitados(self)){
+        if(l_nos->visita != 2) busca_profundidade(self, l_nos);
+        if(self->tem_ciclo) return true;
+        l_nos = l_nos->prox;
+    }
+    return false;
 }
