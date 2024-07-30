@@ -24,12 +24,12 @@ int main(){
     printf("valor de 3: %d\n", *dado);
     printa_grafo(g);
     printf("Começa remover\n");
-    for(int i = 0; i<2; i++){
-        grafo_remove_no(g, i);
-    }
+    grafo_remove_no(g, 1);
     printa_grafo(g);
     printf("ADD ARESTA\n");
     grafo_altera_valor_aresta(g, 1, 2, dado2);
+    grafo_altera_valor_aresta(g, 0, 2, dado2);
+    grafo_altera_valor_aresta(g, 1, 3, dado2);
     grafo_altera_valor_aresta(g, 1, 0, dado2);
     printa_grafo(g);
     printf("MODIFICA ARESTA\n");
@@ -42,6 +42,24 @@ int main(){
 
     grafo_valor_aresta(g, 1, 2, dado2);
     printf("Teste: %f\n", v_dado2);
+
+
+    printf("CONSULTANDO ARESTA QUE CHEGAM EM 2\n");
+    grafo_arestas_que_chegam(g, 2);
+    int *v = (int*)malloc(sizeof(int));
+    while(grafo_proxima_aresta(g, v, dado2)){
+        int vizinho = *v;
+        printf("chega de %d\n", vizinho);
+        printf("peso %f\n", v_dado2);
+    }
+
+    printf("CONSULTANDO ARESTA QUE PARTEM DE 1\n");
+    grafo_arestas_que_partem(g, 1);
+    while(grafo_proxima_aresta(g, v, dado2)){
+        int vizinho = *v;
+        printf("vai para %d\n", vizinho);
+        printf("peso %f\n", v_dado2);
+    }
 
     grafo_destroi(g);
     return 0;

@@ -259,9 +259,10 @@ Consulta *cria_consulta(Aresta *a){
     return consulta;
 }
 
-void insere_consulta(Grafo self, Aresta a){
+void insere_consulta(Grafo self, Aresta *a){
     if(self->consulta == NULL){
         self->consulta = cria_consulta(a);
+        printf("Criou primeira consulta\n");
         return;
     }
     Consulta *c = self->consulta;
@@ -269,6 +270,8 @@ void insere_consulta(Grafo self, Aresta a){
         c = c->prox;
     }
     c->prox = cria_consulta(a);
+    printf("Criou proxima consulta\n");
+
 }
 
 void grafo_arestas_que_partem(Grafo self, int origem){
@@ -276,6 +279,8 @@ void grafo_arestas_que_partem(Grafo self, int origem){
     Aresta *a = n->arestas;
     while(a!=NULL){
         insere_consulta(self, a);
+        float *teste = (float*)a->peso;
+        printf("inseriu %f\n", *teste);
         a = a->prox;
     }
     self->consulta->origem = true;
@@ -288,6 +293,8 @@ void grafo_arestas_que_chegam(Grafo self, int destino){
         while(a!=NULL){
             if(a->destino == destino){
                 insere_consulta(self, a);
+                float *teste = (float*)a->peso;
+                printf("inseriu %f\n", *teste);
             }
             a=a->prox;
         }
@@ -301,14 +308,16 @@ bool grafo_proxima_aresta(Grafo self, int *vizinho, void *pdado){
     if(c==NULL) return false;
 
     if(c->origem == true){
+        printf("a\n");
         *vizinho = c->aresta->fim->numero;
     }
     else{
-        No *n = pega_no(self, c->aresta->destino);
+        No *n = pega_no(self, c->aresta->origem);
         *vizinho = n->numero;
     }
-    memcpy(pdado, aresta->peso self->tam_aresta);
+    memcpy(pdado, c->aresta->peso, self->tam_aresta);
     
-    self = self->prox;
+    self->consulta = self->consulta->prox;
     free(c);
+    return true;
 }
