@@ -27,9 +27,13 @@ int main(){
     grafo_remove_no(g, 1);
     printa_grafo(g);
     printf("ADD ARESTA\n");
+    v_dado2 = 1.2;
     grafo_altera_valor_aresta(g, 1, 2, dado2);
+    v_dado2 = 0.2;
     grafo_altera_valor_aresta(g, 0, 2, dado2);
+    v_dado2 = 1.3;
     grafo_altera_valor_aresta(g, 1, 3, dado2);
+    v_dado2 = 1.0;
     grafo_altera_valor_aresta(g, 1, 0, dado2);
     printa_grafo(g);
     printf("MODIFICA ARESTA\n");

@@ -252,16 +252,17 @@ bool grafo_valor_aresta(Grafo self, int origem, int destino, void *pdado){
     return true;
 }
 
-Consulta *cria_consulta(Aresta *a){
+Consulta *cria_consulta(Aresta *a, bool origem){
     Consulta* consulta = (Consulta*)malloc(sizeof(Consulta));
     consulta->aresta = a;
     consulta->prox = NULL;
+    consulta->origem = origem;
     return consulta;
 }
 
-void insere_consulta(Grafo self, Aresta *a){
+void insere_consulta(Grafo self, Aresta *a, bool origem){
     if(self->consulta == NULL){
-        self->consulta = cria_consulta(a);
+        self->consulta = cria_consulta(a, origem);
         printf("Criou primeira consulta\n");
         return;
     }
@@ -269,7 +270,7 @@ void insere_consulta(Grafo self, Aresta *a){
     while(c->prox!= NULL){
         c = c->prox;
     }
-    c->prox = cria_consulta(a);
+    c->prox = cria_consulta(a, origem);
     printf("Criou proxima consulta\n");
 
 }
@@ -278,12 +279,11 @@ void grafo_arestas_que_partem(Grafo self, int origem){
     No *n = pega_no(self, origem);
     Aresta *a = n->arestas;
     while(a!=NULL){
-        insere_consulta(self, a);
+        insere_consulta(self, a, true);
         float *teste = (float*)a->peso;
-        printf("inseriu %f\n", *teste);
+        printf("inseriu %f para %d\n", *teste, a->destino);
         a = a->prox;
     }
-    self->consulta->origem = true;
 }
 
 void grafo_arestas_que_chegam(Grafo self, int destino){
@@ -292,7 +292,7 @@ void grafo_arestas_que_chegam(Grafo self, int destino){
         Aresta *a = n->arestas;
         while(a!=NULL){
             if(a->destino == destino){
-                insere_consulta(self, a);
+                insere_consulta(self, a, false);
                 float *teste = (float*)a->peso;
                 printf("inseriu %f\n", *teste);
             }
@@ -300,7 +300,6 @@ void grafo_arestas_que_chegam(Grafo self, int destino){
         }
         n=n->prox;
     }
-    self->consulta->origem = false;
 }
 
 bool grafo_proxima_aresta(Grafo self, int *vizinho, void *pdado){
@@ -308,8 +307,7 @@ bool grafo_proxima_aresta(Grafo self, int *vizinho, void *pdado){
     if(c==NULL) return false;
 
     if(c->origem == true){
-        printf("a\n");
-        *vizinho = c->aresta->fim->numero;
+        *vizinho = c->aresta->destino;
     }
     else{
         No *n = pega_no(self, c->aresta->origem);

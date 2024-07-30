@@ -50,18 +50,18 @@ bool grafo_valor_aresta(Grafo self, int origem, int destino, void *pdado);      
 // inicia uma consulta a arestas que partem do nó origem
 // as próximas chamadas a 'grafo_proxima_aresta' devem retornar os valores correspondentes
 //   à cada aresta que parte desse nó
-void grafo_arestas_que_partem(Grafo self, int origem);
+void grafo_arestas_que_partem(Grafo self, int origem);                          //feito
 // inicia uma consulta a arestas que chegam ao nó destino
 // as próximas chamadas a 'grafo_proxima_aresta' devem retornar os valores correspondentes
 //   à cada aresta que chega nesse nó
-void grafo_arestas_que_chegam(Grafo self, int destino);
+void grafo_arestas_que_chegam(Grafo self, int destino);                         //feito
 // retorna a próxima aresta, de acordo com a última consulta iniciada por 
 //   'grafo_arestas_que_partem' ou 'grafo_arestas_que_chegam'
 // o valor do nó vizinho ao nó da consulta deve ser colocado em 'vizinho' (se não for NULL),
 //   o valor associado à aresta deve ser colocado em '*pdado' (se não for NULL) e a função
 //   deve retornar true. Caso não exista mais aresta que satisfaça a consulta, retorna
 //   false.
-bool grafo_proxima_aresta(Grafo self, int *vizinho, void *pdado);
+bool grafo_proxima_aresta(Grafo self, int *vizinho, void *pdado);               //feito
 
 // Algoritmos
 
