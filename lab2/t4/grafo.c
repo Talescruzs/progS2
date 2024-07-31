@@ -35,6 +35,7 @@ typedef struct guarda_no {
 
 struct _grafo{
     Consulta *consulta;
+    // Guarda_no *guarda_no;
     No *nos;
     int tam_aresta;
     int tam_no;
@@ -381,18 +382,19 @@ Guarda_no *cria_guarda_no(){
     return gn;
 }
 
-void insere_guarda_no(Guarda_no *self, No* n){
-    if(self->no == NULL){
+Guarda_no *insere_guarda_no(Guarda_no *self, No* n){
+    if(self == NULL){
+        self = cria_guarda_no();
         self->no = n;
-        self->prox = cria_guarda_no();
-        return;
+        return self;
     }
     Guarda_no *gn = self;
     while(gn->prox!= NULL){
         gn = gn->prox;
     }
-    gn->no = n;
     gn->prox = cria_guarda_no();
+    gn->prox->no = n;
+    return self;
 }
 
 Guarda_no *remove_guarda_no(Guarda_no *self, int n){
@@ -419,30 +421,32 @@ int qtd_restante_nos(Guarda_no *self){
     Guarda_no *gn = self;
     int count = 0;
     while(gn!=NULL){
+        // printf("NOS GUARDADOS = %d\n", gn->no->numero);
         count++;
         gn = gn->prox;
     }
+    // printf("QTD NOS = %d\n", count);
     return count;
 }
 
 Fila grafo_ordem_topologica(Grafo self){
     Fila fila = fila_cria(sizeof(int));
     No *l_nos = self->nos; 
-    Guarda_no *gn = cria_guarda_no();
+    Guarda_no *gn = NULL;
     
     while(l_nos!=NULL){
         grafo_arestas_que_chegam(self, l_nos->numero);
         if(self->consulta == NULL){
             fila_insere(fila, &l_nos->numero); // antecessor de todos
-            printf("Inseriu %d\n", l_nos->numero);
+            // printf("Inseriu %d\n", l_nos->numero);
         }
         else{
-            insere_guarda_no(gn, l_nos);
+            gn = insere_guarda_no(gn, l_nos);
         }
         l_nos = l_nos->prox;
     }
     Guarda_no *temp = gn;
-    int mudou = 0, flag = 0, passou = 1;
+    int mudou = 0, flag = 0, add = 1;
     int v_numero, v_n_no;
     int *numero = &v_numero;
     int *n_no = &v_n_no;
@@ -451,44 +455,45 @@ Fila grafo_ordem_topologica(Grafo self){
     while(qtd_restante_nos(gn) > 0){
         l_nos = temp->no;
 
-        printf("A\n");
+        // printf("Verificando %d\n", l_nos->numero);
 
         grafo_arestas_que_chegam(self, l_nos->numero);
 
-        while(grafo_proxima_aresta(self, numero, dado) && passou==1){
-            printf("Em %d\n", l_nos->numero);
-            printf("Vem de %d\n", v_numero);
+        while(grafo_proxima_aresta(self, numero, dado) && add==1){
+            // printf("Em %d\n", l_nos->numero);
+            // printf("Vem de %d\n", v_numero);
             fila_inicia_percurso(fila, 0);
             while(fila_proximo(fila, n_no) && flag==0){
                 if(v_n_no == v_numero){
                     flag = 1;
-                    printf("Parou em %d\n", l_nos->numero);
+                    // printf("%d esta limpo\n", v_n_no);
                 }
             }
             if(flag==0){
-                passou = 0;
+                add = 0;
             }
-            flag = 1;
+            flag = 0;
         }
-        if(passou == 0){
-            printf("Inseriu\n");
+        if(add == 1){
+            // printf("Inseriu %d\n", l_nos->numero);
             fila_insere(fila, &l_nos->numero); // antecessor de todos e sucessor apenas dos que já foram
             gn = remove_guarda_no(gn, l_nos->numero);
             mudou = 1;
         }
 
         temp = temp->prox;
-        if(temp==NULL){
+        if(temp == NULL || temp->no==NULL){
             if(mudou == 0){
                 fila_destroi(fila);
                 fila = NULL;
-                break;
+                return fila;
             }
             else{
                 temp = gn;
             }
         }
         mudou = 0;
+        add = 1;
     }
 
     return fila;

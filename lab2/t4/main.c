@@ -34,7 +34,7 @@ int main(){
     v_dado2 = 1.3;
     grafo_altera_valor_aresta(g, 1, 3, dado2);
     v_dado2 = 3.1;
-    // grafo_altera_valor_aresta(g, 3, 1, dado2);
+    grafo_altera_valor_aresta(g, 3, 1, dado2);
     v_dado2 = 1.0;
     grafo_altera_valor_aresta(g, 1, 0, dado2);
     printa_grafo(g);
@@ -76,13 +76,15 @@ int main(){
 
     printf("CONSULTANDO ORDEM TOPOLOGICA\n");
     Fila f = grafo_ordem_topologica(g);
-    fila_inicia_percurso(f, 0);
-    while(fila_proximo(f, dado)){
-        printf("%d\n", v_dado);
+    if(f == NULL){
+        printf("nao tem\n");
     }
-
-
-
+    else{
+        fila_inicia_percurso(f, 0);
+        while(fila_proximo(f, dado)){
+            printf("%d\n", v_dado);
+        }
+    }
     grafo_destroi(g);
     return 0;
 }
