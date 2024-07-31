@@ -66,6 +66,7 @@ No *cria_no(int numero, void *pdado, int tam_no){
     memcpy(no->valor, pdado, tam_no);
     no->numero = numero;
     no->visita = 0;
+    no->prox = NULL;
     return no;
 }
 void printa_grafo(Grafo self){
@@ -321,7 +322,6 @@ void grafo_arestas_que_chegam(Grafo self, int destino){
 bool grafo_proxima_aresta(Grafo self, int *vizinho, void *pdado){
     Consulta *c = self->consulta;
     if(c==NULL) return false;
-
     if(c->origem == true){
         *vizinho = c->aresta->destino;
     }
@@ -329,10 +329,15 @@ bool grafo_proxima_aresta(Grafo self, int *vizinho, void *pdado){
         No *n = pega_no(self, c->aresta->origem);
         *vizinho = n->numero;
     }
-    memcpy(pdado, c->aresta->peso, self->tam_aresta);
-    
+    // float teste = *c->aresta->peso;
+    // printf("b.b %d %ld %ld\n", self->tam_aresta, sizeof(int), sizeof(bool));
+    // if(c->aresta==NULL) printf("SOS\n");
+    memmove(pdado, c->aresta->peso, self->tam_aresta);
+    // printf("b.c\n");
     self->consulta = self->consulta->prox;
+    // printf("b.d\n");
     free(c);
+    // printf("b.e\n");
     return true;
 }
 
@@ -422,7 +427,6 @@ int qtd_restante_nos(Guarda_no *self){
     Guarda_no *gn = self;
     int count = 0;
     while(gn!=NULL){
-        // printf("NOS GUARDADOS = %d\n", gn->no->numero);
         count++;
         gn = gn->prox;
     }
@@ -447,12 +451,13 @@ Fila grafo_ordem_topologica(Grafo self){
         l_nos = l_nos->prox;
     }
     Guarda_no *temp = gn;
-    int mudou = 0, flag = 0, add = 1;
     int v_numero, v_n_no;
     int *numero = &v_numero;
     int *n_no = &v_n_no;
     float v_dado;
     float *dado = &v_dado;
+    int flag = 0, add = 1;
+    int mudou = 0;
     while(qtd_restante_nos(gn) > 0){
         l_nos = temp->no;
 
@@ -485,6 +490,7 @@ Fila grafo_ordem_topologica(Grafo self){
         temp = temp->prox;
         if(temp == NULL || temp->no==NULL){
             if(mudou == 0){
+                // printf("destroi\n");
                 fila_destroi(fila);
                 fila = NULL;
                 return fila;
@@ -493,9 +499,10 @@ Fila grafo_ordem_topologica(Grafo self){
                 temp = gn;
             }
         }
+        // printf("mudou = %d\n", mudou);
         mudou = 0;
         add = 1;
     }
-
+    // printf("terminou topolofica\n");
     return fila;
 }
