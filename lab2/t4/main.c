@@ -73,6 +73,16 @@ int main(){
     else{
         printf("nao tem\n");
     }
+
+    printf("CONSULTANDO ORDEM TOPOLOGICA\n");
+    Fila f = grafo_ordem_topologica(g);
+    fila_inicia_percurso(f, 0);
+    while(fila_proximo(f, dado)){
+        printf("%d\n", v_dado);
+    }
+
+
+
     grafo_destroi(g);
     return 0;
 }

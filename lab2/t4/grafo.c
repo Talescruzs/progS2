@@ -28,6 +28,11 @@ typedef struct consulta {
     struct consulta *prox;
 } Consulta;
 
+typedef struct guarda_no {
+    No *no;
+    struct guarda_no *prox;
+} Guarda_no;
+
 struct _grafo{
     Consulta *consulta;
     No *nos;
@@ -277,25 +282,33 @@ void insere_consulta(Grafo self, Aresta *a, bool origem){
 
 }
 
+void destroi_consulta(Grafo self){
+    Consulta *c = self->consulta;
+    while(self->consulta!= NULL){
+        c = self->consulta;
+        self->consulta = self->consulta->prox;
+        free(c); 
+    }
+}
+
 void grafo_arestas_que_partem(Grafo self, int origem){
+    destroi_consulta(self);
     No *n = pega_no(self, origem);
     Aresta *a = n->arestas;
     while(a!=NULL){
         insere_consulta(self, a, true);
-        float *teste = (float*)a->peso;
         a = a->prox;
     }
 }
 
 void grafo_arestas_que_chegam(Grafo self, int destino){
+    destroi_consulta(self);
     No *n = self->nos;
     while(n!=NULL){
         Aresta *a = n->arestas;
         while(a!=NULL){
             if(a->destino == destino){
                 insere_consulta(self, a, false);
-                float *teste = (float*)a->peso;
-                printf("inseriu %f\n", *teste);
             }
             a=a->prox;
         }
@@ -359,4 +372,124 @@ bool grafo_tem_ciclo(Grafo self){
         l_nos = l_nos->prox;
     }
     return false;
+}
+
+Guarda_no *cria_guarda_no(){
+    Guarda_no* gn = (Guarda_no*)malloc(sizeof(Guarda_no));
+    gn->no = NULL;
+    gn->prox = NULL;
+    return gn;
+}
+
+void insere_guarda_no(Guarda_no *self, No* n){
+    if(self->no == NULL){
+        self->no = n;
+        self->prox = cria_guarda_no();
+        return;
+    }
+    Guarda_no *gn = self;
+    while(gn->prox!= NULL){
+        gn = gn->prox;
+    }
+    gn->no = n;
+    gn->prox = cria_guarda_no();
+}
+
+Guarda_no *remove_guarda_no(Guarda_no *self, int n){
+    if(self->no == NULL){
+        return NULL;
+    }
+    Guarda_no *gn = self;
+    Guarda_no *ant = self;
+    while(gn->prox!= NULL && gn->no->numero!=n){
+        ant = gn;
+        gn = gn->prox;
+    }
+    if(gn->no->numero==n){
+        if(ant==gn){
+            return gn->prox;
+        }
+        ant->prox = gn->prox;
+        free(gn);
+    }
+    return self;
+}
+
+int qtd_restante_nos(Guarda_no *self){
+    Guarda_no *gn = self;
+    int count = 0;
+    while(gn!=NULL){
+        count++;
+        gn = gn->prox;
+    }
+    return count;
+}
+
+Fila grafo_ordem_topologica(Grafo self){
+    Fila fila = fila_cria(sizeof(int));
+    No *l_nos = self->nos; 
+    Guarda_no *gn = cria_guarda_no();
+    
+    while(l_nos!=NULL){
+        grafo_arestas_que_chegam(self, l_nos->numero);
+        if(self->consulta == NULL){
+            fila_insere(fila, &l_nos->numero); // antecessor de todos
+            printf("Inseriu %d\n", l_nos->numero);
+        }
+        else{
+            insere_guarda_no(gn, l_nos);
+        }
+        l_nos = l_nos->prox;
+    }
+    Guarda_no *temp = gn;
+    int mudou = 0, flag = 0, passou = 1;
+    int v_numero, v_n_no;
+    int *numero = &v_numero;
+    int *n_no = &v_n_no;
+    float v_dado;
+    float *dado = &v_dado;
+    while(qtd_restante_nos(gn) > 0){
+        l_nos = temp->no;
+
+        printf("A\n");
+
+        grafo_arestas_que_chegam(self, l_nos->numero);
+
+        while(grafo_proxima_aresta(self, numero, dado) && passou==1){
+            printf("Em %d\n", l_nos->numero);
+            printf("Vem de %d\n", v_numero);
+            fila_inicia_percurso(fila, 0);
+            while(fila_proximo(fila, n_no) && flag==0){
+                if(v_n_no == v_numero){
+                    flag = 1;
+                    printf("Parou em %d\n", l_nos->numero);
+                }
+            }
+            if(flag==0){
+                passou = 0;
+            }
+            flag = 1;
+        }
+        if(passou == 0){
+            printf("Inseriu\n");
+            fila_insere(fila, &l_nos->numero); // antecessor de todos e sucessor apenas dos que já foram
+            gn = remove_guarda_no(gn, l_nos->numero);
+            mudou = 1;
+        }
+
+        temp = temp->prox;
+        if(temp==NULL){
+            if(mudou == 0){
+                fila_destroi(fila);
+                fila = NULL;
+                break;
+            }
+            else{
+                temp = gn;
+            }
+        }
+        mudou = 0;
+    }
+
+    return fila;
 }
