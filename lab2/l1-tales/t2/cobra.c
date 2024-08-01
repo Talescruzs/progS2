@@ -200,6 +200,7 @@ posicao sorteia_pos(retangulo r) {
 void sorteia_obstaculos(estado *j) {
   while (!fila_vazia(j->obstaculos)) {
     fila_remove(j->obstaculos, NULL);
+    
   }
   int nobs = 0;
   while (nobs != 4) {
@@ -314,20 +315,13 @@ void movimenta(estado *j) {
 
 // A função principal
 int main(void) {
-  
   estado jogo;
-  printf("A\n");
   inicializa_jogo(&jogo);
-  printf("B\n");
   while (jogo.estado != terminado) {
-    printf("C\n");
     desenha_tela(&jogo);
-    printf("D\n");
     processa_teclado(&jogo);
-    printf("E\n");
     movimenta(&jogo);
   }
-    printf("F\n");
   // encerra a tela gráfica
   tela_fim();
   tecla_fim();

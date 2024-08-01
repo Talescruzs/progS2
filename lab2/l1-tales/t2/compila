@@ -1,0 +1,6 @@
+cobra:
+	gcc -g -Wall -o cobra_le fila_le.c cobra.c tecla.c tela.c
+	gcc -g -Wall -o cobra_cv fila_cv.c cobra.c tecla.c tela.c
+mede_fila:
+	gcc -g -Wall -o medefilale fila_le.c mede_fila.c
+	gcc -g -Wall -o medefilacv fila_cv.c mede_fila.c
