@@ -1,0 +1,1 @@
+gcc -g -Wall -o arvore main.c in_game.c arvore.c telag.c -lallegro_font -lallegro_color -lallegro_ttf -lallegro_primitives -lallegro
