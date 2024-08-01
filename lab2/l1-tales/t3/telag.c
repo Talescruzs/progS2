@@ -232,6 +232,7 @@ char tela_tecla(void)
       switch (k) {
         case ALLEGRO_KEY_ENTER:     return '\n';
         case ALLEGRO_KEY_BACKSPACE: return '\b';
+        case ALLEGRO_KEY_ESCAPE: return ALLEGRO_KEY_ESCAPE;
       }
       int c = ev.keyboard.unichar;
       return c;

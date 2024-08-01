@@ -163,11 +163,20 @@ void controle_input(Jogo j){
         }
         j->input_p->palavra_digitada[0] = '\0';
         j->input_p->tentou_remover = 1;
+        j->sair = 0;
     }
     else if(j->input_p->letra_digitada=='\b'){
+        j->sair = 0;
         remove_ultima_letra(j->input_p->palavra_digitada);
     }
+    else if(j->input_p->letra_digitada==59){
+        if(j->sair==1){
+            j->sair = 2;
+        }
+        else j->sair = 1;
+    }
     else if(j->input_p->letra_digitada!=0){
+        j->sair = 0;
         seta_ultima_letra(j->input_p->palavra_digitada, j->input_p->letra_digitada, 9);
     }
 }
@@ -187,6 +196,7 @@ Jogo cria_jogo(){
     j->input_p = cria_input_p();
     j->relogio = cria_relogio();
     j->pontos = 0;
+    j->sair = 0;
 
     return j;
 }
@@ -322,6 +332,13 @@ void tela_menu(Jogo j){
             }
             tela_retangulo(temp->esp->iniX, temp->esp->iniY, temp->esp->iniX+temp->esp->tamX, temp->esp->iniY+temp->esp->tamY, 2, corbt, 0);
             tela_texto(temp->esp->iniX+(temp->esp->tamX/2),temp->esp->iniY+(temp->esp->tamY/2),j->tam_letra,corbt,temp->palavra);
+            if(j->sair == 1){
+                tela_texto_dir((j->tela_total->tamX/2)-j->tam_letra*7,j->tela_total->tamY/4,j->tam_letra,corus,"Quer sair? escape novamente");
+            }
+            else if(j->sair == 2){
+                j->dificuldade = -1;
+                return;
+            }
             temp = temp->prox;
             corbt = 8;
         }
@@ -360,6 +377,14 @@ void tela_jogo(Jogo j){
             cor = 2;
         }
         else{
+            return;
+        }
+
+        if(j->sair == 1){
+            tela_texto_dir((j->tela_total->tamX/2)-j->tam_letra*7,j->tela_total->tamY/4,j->tam_letra,8,"Quer sair? escape novamente");
+        }
+        else if(j->sair == 2){
+            j->dificuldade = -1;
             return;
         }
         tela_texto_esq(j->tela_total->tamX-j->tela_total->iniX-50,j->tela_total->iniY,j->tam_letra,cor, "Equilibrio");

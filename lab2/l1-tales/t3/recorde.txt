@@ -1,3 +1,2 @@
 c 128 medio
 b 42 medio
-a 6 dificil

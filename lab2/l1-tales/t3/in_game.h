@@ -56,6 +56,7 @@ typedef struct jogo{
     int dificuldade;
     int tam_letra;
     char jogador [10];
+    int sair;
 } *Jogo;
 
 

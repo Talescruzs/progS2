@@ -16,7 +16,7 @@ int main(){
         tela_atualiza();
         if(j->dificuldade > 0){
             tela_jogo(j);
-            salva_recorde(j->jogador, j->pontos, j->dificuldade);
+            if(j->dificuldade!=-1) salva_recorde(j->jogador, j->pontos, j->dificuldade);
             tela_atualiza();
         }
         else if(j->dificuldade == 0){
