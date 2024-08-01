@@ -373,6 +373,7 @@ Individuo *mistura_individuos(Individuo *ind1, Individuo *ind2)
     dominante = ind1;
     recessivo = ind2;
   }
+
   Individuo *filhote = individuo_cria();
   assert(filhote != NULL);
   filhote->geracao = max(dominante->geracao, recessivo->geracao) + 1;
@@ -389,6 +390,7 @@ Individuo *mistura_individuos(Individuo *ind1, Individuo *ind2)
     }
     grafo_insere_no(filhote->rede->grafo, &neurofilho);
   }
+
   // mistura as sinapses
   for (int no_origem = 0; no_origem < nnos; no_origem++) {
     int no_destino;
@@ -406,6 +408,7 @@ Individuo *mistura_individuos(Individuo *ind1, Individuo *ind2)
       individuo_altera_sinapse(filhote, no_origem, no_destino, &sinafilho);
     }
   }
+
   filhote->rede->ordem = grafo_ordem_topologica(filhote->rede->grafo);
   return filhote;
 }
@@ -523,24 +526,18 @@ void mutacao_valor_neuronios(Individuo *self)
 // altera os pesos das sinapses da rede
 void mutacao_valor_sinapses(Individuo *self)
 {
-  // printf("a.a\n");
   bool bagual = probabilidade(PROB_MUTAR_PESOS_BAGUALMENTE); // 50% de chance de fazem mudanças mais fortes
   int prob_relativo = 100, prob_absoluto = 100;
   if (bagual) {
     prob_relativo = 70;
     prob_absoluto = 90;
   }
-  // printf("a.b\n");
   int nneuronios = individuo_nneuronios(self);
-  printf("n_neuronios = %d\n", nneuronios);
   for (int pos_origem = 0; pos_origem < nneuronios; pos_origem++) {
-    printf("%d\n", pos_origem);
     int pos_destino;
     Sinapse sinapse;
     individuo_sinapses_que_partem(self, pos_origem);
-    printf("a\n");
     while (individuo_proxima_sinapse(self, &pos_destino, &sinapse)) {
-      printf("a.a\n");
       int aleat = aleatorio(100);
       if (aleat >= prob_absoluto) continue;
       if (individuo_sinapse(self, pos_origem, pos_destino, &sinapse)) {
@@ -552,9 +549,7 @@ void mutacao_valor_sinapses(Individuo *self)
         individuo_altera_sinapse(self, pos_origem, pos_destino, &sinapse);
       }
     }
-    printf("b\n");
   }
-    printf("c\n");
 }
 
 
@@ -590,29 +585,20 @@ void mutacao_inverte_habilitacao_sinapse(Individuo *self)
 // faz mutações variadas em uma rede
 void realiza_mutacoes(Individuo *self)
 {
-  // printf("a.c.1.a.a\n");
   bool mutacao_estrutural;
   if (probabilidade(PROB_CRIAR_NEURONIO)) {
-    // printf("a.c.1.a.a.1\n");
     mutacao_estrutural = true;
     mutacao_divide_sinapse(self);
   } else if (probabilidade(PROB_CRIAR_SINAPSE)) {
-    // printf("a.c.1.a.a.2\n");
     mutacao_estrutural = true;
     mutacao_cria_sinapse(self);
   } else {
-    // printf("a.c.1.a.a.3\n");
     mutacao_estrutural = false;
     if (probabilidade(PROB_MUTAR_PESOS)) {
-      // printf("a.c.1.a.a.3.1\n");
       mutacao_valor_neuronios(self);
-      // printf("a.c.1.a.a.3.1.a\n");
       mutacao_valor_sinapses(self);
-      // printf("a.c.1.a.a.3.1.b\n");
     }
-    // printf("a.c.1.a.a.3.a\n");
     if (probabilidade(PROB_INV_HABILITACAO)) mutacao_inverte_habilitacao_sinapse(self);
-    // printf("a.c.1.a.a.3.b\n");
   }
   if (mutacao_estrutural) {
     if (self->rede->ordem != NULL) fila_destroi(self->rede->ordem);
@@ -763,7 +749,6 @@ void geracao_insere_individuo_sem_especiar(Geracao *geracao, Individuo *individu
 void geracao_insere_individuo(Geracao *geracao, Individuo *individuo)
 {
   geracao_insere_individuo_sem_especiar(geracao, individuo);
-  // printf("AAAAAAA\n");
   geracao_especia_individuo(geracao, individuo);
 }
 
@@ -837,7 +822,7 @@ void reproduz_geracao_estagnada(Geracao *velhos, Geracao *novos)
 // cria os individuos de uma nova geracao a partir da geracao precedente
 void reproduz_geracao(Geracao *velhos, Geracao *novos)
 {
-  fprintf(stderr, "Reproduz G%d\n", velhos->id);
+  //fprintf(stderr, "Reproduz G%d ", velhos->id);
   // ordena as espécies por pontuação original
   qsort(velhos->especies, velhos->n_especies, sizeof(Especie),
         compara_especies_por_pontuacao_original);
@@ -863,7 +848,6 @@ void reproduz_geracao(Geracao *velhos, Geracao *novos)
     // copia o campeão
     copia_melhor_da_especie(novos, especie_velha);
   }
-  // printf("a.a\n");
   // gera o número de descendentes de cada espécie
   for (int e = 0; e < velhos->n_especies; e++) {
     Especie *especie_velha = &velhos->especies[e];
@@ -872,19 +856,13 @@ void reproduz_geracao(Geracao *velhos, Geracao *novos)
       Individuo *mamae = especie_velha->individuos[aleatorio_p(especie_velha->n_individuos)];
       Individuo *filhote;
       if (especie_velha->n_individuos == 1 || probabilidade(25)) {
-        // printf("a.c.1\n");
         filhote = mistura_individuos(mamae, mamae);
-        // printf("a.c.1.a\n");
         realiza_mutacoes(filhote);
-        // printf("a.c.1.b\n");
       } else {
-        // printf("a.c.2\n");
         Individuo *papai;
         if (probabilidade(PROB_MESMA_ESPECIE)) {
-          // printf("a.c.2.1\n");
           papai = especie_velha->individuos[aleatorio_p(especie_velha->n_individuos)];
         } else {
-          // printf("a.c.2.2\n");
           Especie *especie_aleatoria;
           for (int tentativas = 0; tentativas < 5; tentativas++) {
             especie_aleatoria = &velhos->especies[aleatorio_p(velhos->n_especies)];
@@ -893,16 +871,12 @@ void reproduz_geracao(Geracao *velhos, Geracao *novos)
           if (especie_aleatoria->n_individuos == 0) especie_aleatoria = especie_velha;
           papai = especie_aleatoria->individuos[0];
         }
-        // printf("a.c.2.a\n");  
         filhote = mistura_individuos(mamae, papai);
-        // printf("a.c.2.b\n");  
         if (compatibilidade(mamae, papai) == 0 || probabilidade(80)) {
           realiza_mutacoes(filhote);
         }
       }
-      // printf("a.d\n");
       geracao_insere_individuo(novos, filhote);
-      // printf("a.e\n");
       //fprintf(stderr, " filho %d foi para esp %d\n", filhote->id, filhote->especie);
     }
   }
@@ -1041,17 +1015,14 @@ void evolui(int n_geracoes)
   // começa com um povo aleatório
   povoa_geracao(&geracao[atual]);
   for (int i = 0; i < n_geracoes; i++) {
-    fprintf(stderr, "Geracao %03d\n", i);
+    //fprintf(stderr, "Geracao %03d\n", i);
     pontua_geracao(&geracao[atual]);
     qsort(geracao[atual].individuos, N_INDIVIDUOS, sizeof(Rede), compara_individuos_por_pontuacao);
     grava_geracao(&geracao[atual]);
     printf("geracao %d melhor=%.0f pior=%.0f media=%.0f nespecies=%d\n", i, geracao[atual].individuos[0]->pontuacao, geracao[atual].individuos[N_INDIVIDUOS-1]->pontuacao, geracao[atual].pontuacao_media, geracao[atual].n_especies);
     calcula_descendentes_por_especie(&geracao[atual]);
-    printf("A\n");
     reproduz_geracao(&geracao[atual], &geracao[prox]);
-    printf("B\n");
     destroi_geracao(&geracao[atual]);
-    printf("C\n");
     atual = prox;
     prox = 1 - atual;
   }
@@ -1072,4 +1043,3 @@ int main(int argc, char *argv[])
     evolui(N_GERACOES);
   }
 }
-

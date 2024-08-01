@@ -67,23 +67,24 @@ No *cria_no(int numero, void *pdado, int tam_no){
     no->numero = numero;
     no->visita = 0;
     no->prox = NULL;
+    no->arestas = NULL;
     return no;
 }
 void printa_grafo(Grafo self){
     No *nos = self->nos;
-    printf("Nos:\n");
+   printf("Nos:\n");
     while(nos != NULL){
         No *temp = nos->prox;
-        printf("Numero: %d\n", nos->numero);
-        int *d = nos->valor;
-        printf("Dado: %d\n", *d);
+       printf(" Numero: %d\n", nos->numero);
+        // int *d = nos->valor;
+        // printf("Dado: %d\n", *d);
         Aresta *arestas = nos->arestas;
         if(arestas!=NULL){
-            printf("Arestas:\n");
+           printf("  Arestas:\n");
             while(arestas != NULL){
                 Aresta *tempA = arestas->prox;
                 float *p = arestas->peso;
-                printf("De %d a %d com peso %f\n", arestas->origem, arestas->destino, *p);
+               printf("   De %d a %d com peso %f\n", arestas->origem, arestas->destino, *p);
                 arestas = tempA;
             }
         }
@@ -128,13 +129,30 @@ int grafo_insere_no(Grafo self, void *pdado){
     l_nos->prox = cria_no(l_nos->numero+1, pdado, self->tam_no);
     return l_nos->prox->numero;
 }
+
+void remove_aresta(int destino, No *origem);
 void grafo_remove_no(Grafo self, int no){
     if(self->nos==NULL) return;
+    Consulta *c = self->consulta;
 
     No *l_nos = self->nos;
     No *no_ant = self->nos;
     if(no == 0){
         self->nos = l_nos->prox;
+        grafo_arestas_que_chegam(self, no);
+        while(self->consulta!=NULL){
+            c=self->consulta;
+            remove_aresta(no, pega_no(self, c->aresta->origem));
+            self->consulta = self->consulta->prox;
+            free(c);
+        }
+        grafo_arestas_que_partem(self, no);
+        while(self->consulta!=NULL){
+            c=self->consulta;
+            remove_aresta(no, pega_no(self, c->aresta->origem));
+            self->consulta = self->consulta->prox;
+            free(c);
+        }
         free(l_nos);
         while(no_ant != NULL){
             no_ant->numero --;
@@ -149,6 +167,20 @@ void grafo_remove_no(Grafo self, int no){
     }
     if(l_nos->numero!=no) return;
     no_ant->prox = l_nos->prox;
+    grafo_arestas_que_chegam(self, no);
+    while(self->consulta!=NULL){
+        c=self->consulta;
+        remove_aresta(no, pega_no(self, c->aresta->origem));
+        self->consulta = self->consulta->prox;
+        free(c);
+    }
+    grafo_arestas_que_partem(self, no);
+    while(self->consulta!=NULL){
+        c=self->consulta;
+        remove_aresta(no, pega_no(self, c->aresta->origem));
+        self->consulta = self->consulta->prox;
+        free(c);
+    }
     free(l_nos);
     no_ant = no_ant->prox;
     while(no_ant != NULL){
@@ -191,6 +223,8 @@ Aresta *cria_aresta(void *peso, int tam_aresta){
     Aresta* aresta = (Aresta*)malloc(sizeof(Aresta));
     aresta->peso = (void *)malloc(tam_aresta);
     memcpy(aresta->peso, peso, tam_aresta);
+    aresta->prox = NULL;
+    aresta->fim = NULL;
     return aresta;
 }
 void insere_aresta(Grafo self, int destino, void *pdado, No *origem){
@@ -222,6 +256,12 @@ void modifica_aresta(Aresta *aresta, void *pdado, int tam_aresta){
 }
 void remove_aresta(int destino, No *origem){
     Aresta *l_arestas = origem->arestas;
+    if(l_arestas==NULL) return;
+    if(l_arestas->destino == destino){
+        origem->arestas = origem->arestas->prox;
+        free(l_arestas);
+        return;
+    }
     Aresta *ant = origem->arestas;
     while(l_arestas->prox != NULL && l_arestas->destino!=destino){
         ant = l_arestas;
@@ -271,17 +311,21 @@ Consulta *cria_consulta(Aresta *a, bool origem){
     consulta->origem = origem;
     return consulta;
 }
-
+void destroi_consulta(Grafo self);
 void insere_consulta(Grafo self, Aresta *a, bool origem){
-    if(self->consulta == NULL){
-        self->consulta = cria_consulta(a, origem);
+    if(a == NULL){
         return;
     }
-    Consulta *c = self->consulta;
-    while(c->prox!= NULL){
-        c = c->prox;
+    if(self->consulta == NULL){
+        self->consulta = cria_consulta(a, origem);
     }
-    c->prox = cria_consulta(a, origem);
+    else{
+        Consulta *c = self->consulta;
+        while(c->prox!= NULL){
+            c = c->prox;
+        }
+        c->prox = cria_consulta(a, origem);
+    }
 
 }
 
@@ -321,7 +365,9 @@ void grafo_arestas_que_chegam(Grafo self, int destino){
 
 bool grafo_proxima_aresta(Grafo self, int *vizinho, void *pdado){
     Consulta *c = self->consulta;
-    if(c==NULL) return false;
+    if(c==NULL){
+        return false;
+    }
     if(c->origem == true){
         *vizinho = c->aresta->destino;
     }
@@ -329,15 +375,9 @@ bool grafo_proxima_aresta(Grafo self, int *vizinho, void *pdado){
         No *n = pega_no(self, c->aresta->origem);
         *vizinho = n->numero;
     }
-    // float teste = *c->aresta->peso;
-    // printf("b.b %d %ld %ld\n", self->tam_aresta, sizeof(int), sizeof(bool));
-    // if(c->aresta==NULL) printf("SOS\n");
     memmove(pdado, c->aresta->peso, self->tam_aresta);
-    // printf("b.c\n");
     self->consulta = self->consulta->prox;
-    // printf("b.d\n");
     free(c);
-    // printf("b.e\n");
     return true;
 }
 
@@ -430,7 +470,6 @@ int qtd_restante_nos(Guarda_no *self){
         count++;
         gn = gn->prox;
     }
-    // printf("QTD NOS = %d\n", count);
     return count;
 }
 
@@ -443,7 +482,6 @@ Fila grafo_ordem_topologica(Grafo self){
         grafo_arestas_que_chegam(self, l_nos->numero);
         if(self->consulta == NULL){
             fila_insere(fila, &l_nos->numero); // antecessor de todos
-            // printf("Inseriu %d\n", l_nos->numero);
         }
         else{
             gn = insere_guarda_no(gn, l_nos);
@@ -461,18 +499,13 @@ Fila grafo_ordem_topologica(Grafo self){
     while(qtd_restante_nos(gn) > 0){
         l_nos = temp->no;
 
-        // printf("Verificando %d\n", l_nos->numero);
-
         grafo_arestas_que_chegam(self, l_nos->numero);
 
         while(grafo_proxima_aresta(self, numero, dado) && add==1){
-            // printf("Em %d\n", l_nos->numero);
-            // printf("Vem de %d\n", v_numero);
             fila_inicia_percurso(fila, 0);
             while(fila_proximo(fila, n_no) && flag==0){
                 if(v_n_no == v_numero){
                     flag = 1;
-                    // printf("%d esta limpo\n", v_n_no);
                 }
             }
             if(flag==0){
@@ -481,7 +514,6 @@ Fila grafo_ordem_topologica(Grafo self){
             flag = 0;
         }
         if(add == 1){
-            // printf("Inseriu %d\n", l_nos->numero);
             fila_insere(fila, &l_nos->numero); // antecessor de todos e sucessor apenas dos que já foram
             gn = remove_guarda_no(gn, l_nos->numero);
             mudou = 1;
@@ -490,7 +522,6 @@ Fila grafo_ordem_topologica(Grafo self){
         temp = temp->prox;
         if(temp == NULL || temp->no==NULL){
             if(mudou == 0){
-                // printf("destroi\n");
                 fila_destroi(fila);
                 fila = NULL;
                 return fila;
@@ -499,10 +530,8 @@ Fila grafo_ordem_topologica(Grafo self){
                 temp = gn;
             }
         }
-        // printf("mudou = %d\n", mudou);
         mudou = 0;
         add = 1;
     }
-    // printf("terminou topolofica\n");
     return fila;
 }
